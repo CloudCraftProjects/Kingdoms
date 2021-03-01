@@ -1,0 +1,8 @@
+name: CraftAttack
+version: @version@
+main: tk.booky.craftattack.CraftAttackMain
+api-version: 1.16
+prefix: CA
+authors: [ booky10 ]
+website: https://booky.tk/
+load: POSTWORLD
