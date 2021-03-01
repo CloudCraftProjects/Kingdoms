@@ -10,5 +10,7 @@ public class TeleportSubCommand extends CommandAPICommand {
 
         withPermission("craftattack.command.teleport");
         withAliases("tp");
+
+        withSubcommand(new BedSubCommand());
     }
 }
