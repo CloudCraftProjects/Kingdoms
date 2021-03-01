@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.booky.craftattack.listener.BlockListener;
 import tk.booky.craftattack.listener.BoatListener;
+import tk.booky.craftattack.listener.MiscListener;
 import tk.booky.craftattack.manager.CraftAttackManager;
 
 import java.util.Arrays;
@@ -34,6 +35,7 @@ public final class CraftAttackMain extends JavaPlugin implements Listener {
         saveDefaultConfig();
         CraftAttackManager.load();
 
+        Bukkit.getPluginManager().registerEvents(new MiscListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new BoatListener(), this);
 
@@ -85,34 +87,5 @@ public final class CraftAttackMain extends JavaPlugin implements Listener {
         if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
 
         event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onDamage(EntityDamageEvent event) {
-        if (event.getEntityType().equals(EntityType.BOAT)) return;
-        if (!isInDistance(event.getEntity().getLocation(), SPAWN_LOCATION, 76)) return;
-
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onSpawn(CreatureSpawnEvent event) {
-        if (!isInDistance(event.getEntity().getLocation(), SPAWN_LOCATION, 76)) return;
-
-        switch (event.getSpawnReason()) {
-            case CUSTOM:
-            case CURED:
-            case EGG:
-            case INFECTION:
-            case ENDER_PEARL:
-            case OCELOT_BABY:
-            case SLIME_SPLIT:
-            case SPAWNER_EGG:
-            case DEFAULT:
-                break;
-            default:
-                event.setCancelled(true);
-                break;
-        }
     }
 }
