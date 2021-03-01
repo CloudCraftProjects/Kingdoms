@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import tk.booky.craftattack.listener.BlockListener;
 import tk.booky.craftattack.listener.BoatListener;
 import tk.booky.craftattack.manager.CraftAttackManager;
 
@@ -33,6 +34,7 @@ public final class CraftAttackMain extends JavaPlugin implements Listener {
         saveDefaultConfig();
         CraftAttackManager.load();
 
+        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new BoatListener(), this);
 
         Bukkit.getPluginManager().registerEvents(this, this);
@@ -79,38 +81,6 @@ public final class CraftAttackMain extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractAtEntityEvent event) {
-        if (!isInDistance(event.getPlayer().getLocation(), SPAWN_LOCATION, 76)) return;
-        if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
-
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onBreak(BlockBreakEvent event) {
-        if (!isInDistance(event.getPlayer().getLocation(), SPAWN_LOCATION, 76)) return;
-        if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
-
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onPlace(BlockPlaceEvent event) {
-        if (!isInDistance(event.getPlayer().getLocation(), SPAWN_LOCATION, 76)) return;
-        if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
-
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onBucket(PlayerBucketFillEvent event) {
-        if (!isInDistance(event.getPlayer().getLocation(), SPAWN_LOCATION, 76)) return;
-        if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
-
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onBucket(PlayerBucketEmptyEvent event) {
         if (!isInDistance(event.getPlayer().getLocation(), SPAWN_LOCATION, 76)) return;
         if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
 
