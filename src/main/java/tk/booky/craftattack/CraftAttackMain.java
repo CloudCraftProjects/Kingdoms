@@ -11,19 +11,32 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import tk.booky.craftattack.manager.CraftAttackManager;
 
 import java.util.Arrays;
 import java.util.List;
 
 public final class CraftAttackMain extends JavaPlugin implements Listener {
 
+    public static CraftAttackMain main;
+
     public static Location SPAWN_LOCATION;
     public static final List<Material> ALLOWED_BLOCKS = Arrays.asList(Material.ENDER_CHEST, Material.CRAFTING_TABLE);
 
     @Override
     public void onEnable() {
+        main = this;
+
+        saveDefaultConfig();
+        CraftAttackManager.load();
+
         Bukkit.getPluginManager().registerEvents(this, this);
         SPAWN_LOCATION = new Location(Bukkit.getWorlds().get(0), -119, 65, 134, -90, 0);
+    }
+
+    @Override
+    public void onDisable() {
+        CraftAttackManager.save(false);
     }
 
     private static boolean isInDistance(Location location1, Location location2, int distance) {
