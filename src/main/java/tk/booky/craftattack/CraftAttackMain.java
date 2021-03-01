@@ -8,9 +8,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.*;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import tk.booky.craftattack.listener.BoatListener;
 import tk.booky.craftattack.manager.CraftAttackManager;
 
 import java.util.Arrays;
@@ -29,6 +32,8 @@ public final class CraftAttackMain extends JavaPlugin implements Listener {
 
         saveDefaultConfig();
         CraftAttackManager.load();
+
+        Bukkit.getPluginManager().registerEvents(new BoatListener(), this);
 
         Bukkit.getPluginManager().registerEvents(this, this);
         SPAWN_LOCATION = new Location(Bukkit.getWorlds().get(0), -119, 65, 134, -90, 0);
@@ -139,13 +144,5 @@ public final class CraftAttackMain extends JavaPlugin implements Listener {
                 event.setCancelled(true);
                 break;
         }
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        if (!isInDistance(event.getPlayer().getLocation(), SPAWN_LOCATION, 5)) return;
-        for (ItemStack item : event.getPlayer().getInventory().getContents()) if (item != null && item.getType().name().endsWith("BOAT")) return;
-
-        event.getPlayer().getInventory().addItem(new ItemStack(Material.OAK_BOAT));
     }
 }

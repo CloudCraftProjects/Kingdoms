@@ -1,11 +1,10 @@
 package tk.booky.craftattack.manager;
 // Created by booky10 in CraftAttack (14:51 01.03.21)
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import tk.booky.craftattack.CraftAttackMain;
 
@@ -63,9 +62,13 @@ public final class CraftAttackManager {
     }
 
     public static boolean isInSpawn(Location location, @Nullable HumanEntity entity) {
-        if (getSpawnLocation() == null || getSpawnRadius() <= -1 || (entity != null && entity.getGameMode().equals(GameMode.CREATIVE))) return false;
+        return isInSpawn(location, entity, getSpawnRadius());
+    }
+
+    public static boolean isInSpawn(Location location, @Nullable HumanEntity entity, int distance) {
+        if (getSpawnLocation() == null || distance <= -1 || (entity != null && entity.getGameMode().equals(GameMode.CREATIVE))) return false;
         else if (location.getWorld().getUID() != getSpawnLocation().getWorld().getUID()) return false;
-        else return !(location.distance(getSpawnLocation()) > getSpawnRadius());
+        else return !(location.distance(getSpawnLocation()) > distance);
     }
 
     public static void setSpawnRadius(int spawnRadius) {
@@ -78,5 +81,15 @@ public final class CraftAttackManager {
 
     public static void setEndLocation(Location endLocation) {
         CraftAttackManager.endLocation = endLocation;
+    }
+
+    public static void giveBoat(HumanEntity entity) {
+        for (ItemStack item : entity.getInventory().getContents()) {
+            if (item != null && Tag.ITEMS_BOATS.isTagged(item.getType())) {
+                return;
+            }
+        }
+
+        entity.getInventory().addItem(new ItemStack(Material.OAK_BOAT));
     }
 }
