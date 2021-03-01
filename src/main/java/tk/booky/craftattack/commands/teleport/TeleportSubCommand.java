@@ -13,5 +13,6 @@ public class TeleportSubCommand extends CommandAPICommand {
 
         withSubcommand(new BedSubCommand());
         withSubcommand(new EndSubCommand());
+        withSubcommand(new SpawnSubCommand());
     }
 }
