@@ -17,6 +17,6 @@ public class AdminSubCommand extends CommandAPICommand {
         withSubcommand(new SetEndLocationSubCommand());
 
         withSubcommand(new GetSpawnLocationSubCommand());
-        withSubcommand(new GetSpawnLocationSubCommand());
+        withSubcommand(new SetSpawnLocationSubCommand());
     }
 }
