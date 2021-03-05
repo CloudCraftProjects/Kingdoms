@@ -10,6 +10,9 @@ public class AdminSubCommand extends CommandAPICommand {
 
         withPermission("craftattack.command.admin");
 
+        withSubcommand(new GetEndRadiusSubCommand());
+        withSubcommand(new SetEndRadiusSubCommand());
+
         withSubcommand(new GetSpawnRadiusSubCommand());
         withSubcommand(new SetSpawnRadiusSubCommand());
 

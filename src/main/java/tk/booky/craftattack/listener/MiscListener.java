@@ -13,7 +13,7 @@ public class MiscListener implements Listener {
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (!event.getEntityType().equals(EntityType.BOAT)) {
-            if (CraftAttackManager.isInSpawn(event.getEntity().getLocation(), null)) {
+            if (CraftAttackManager.isInSpawn(event.getEntity().getLocation(), null) || CraftAttackManager.isInEnd(event.getEntity().getLocation(), null)) {
                 event.setCancelled(true);
             }
         }
