@@ -21,7 +21,7 @@ public final class CraftAttackManager {
         FileConfiguration config = plugin.getConfig();
 
         endLocation = config.getLocation("end.location", null);
-        spawnRadius = config.getInt("end.radius", -1);
+        endRadius = config.getInt("end.radius", -1);
         spawnLocation = config.getLocation("spawn.location", null);
         spawnRadius = config.getInt("spawn.radius", -1);
     }
