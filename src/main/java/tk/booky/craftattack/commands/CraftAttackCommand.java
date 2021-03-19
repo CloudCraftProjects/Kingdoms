@@ -3,6 +3,7 @@ package tk.booky.craftattack.commands;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import tk.booky.craftattack.commands.admin.AdminSubCommand;
+import tk.booky.craftattack.commands.breed.BreedSubCommand;
 import tk.booky.craftattack.commands.teleport.TeleportSubCommand;
 
 public class CraftAttackCommand extends CommandAPICommand {
@@ -15,5 +16,6 @@ public class CraftAttackCommand extends CommandAPICommand {
 
         withSubcommand(new TeleportSubCommand());
         withSubcommand(new AdminSubCommand());
+        withSubcommand(new BreedSubCommand());
     }
 }
