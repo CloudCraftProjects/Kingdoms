@@ -44,6 +44,6 @@ public class MiscListener implements Listener {
     @EventHandler
     public void onBreed(EntityBreedEvent event) {
         if (event.getBreeder() == null) return;
-        CraftAttackManager.addBreed(event.getBreeder().getUniqueId());
+        CraftAttackManager.addBreeds(event.getBreeder().getUniqueId(), 1);
     }
 }

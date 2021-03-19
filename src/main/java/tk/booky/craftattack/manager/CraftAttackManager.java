@@ -125,8 +125,8 @@ public final class CraftAttackManager {
         return Collections.unmodifiableMap(breeds);
     }
 
-    public static void addBreed(UUID uuid) {
-        breeds.put(uuid, breeds.getOrDefault(uuid, 0) + 1);
+    public static void addBreeds(UUID uuid, int breeds) {
+        CraftAttackManager.breeds.put(uuid, CraftAttackManager.breeds.getOrDefault(uuid, 0) + breeds);
         save(true);
     }
 
