@@ -2,7 +2,7 @@ package tk.booky.craftattack;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import tk.booky.craftattack.commands.CraftAttackCommand;
+import tk.booky.craftattack.commands.CraftAttackRootCommand;
 import tk.booky.craftattack.listener.BlockListener;
 import tk.booky.craftattack.listener.BoatListener;
 import tk.booky.craftattack.listener.InteractListener;
@@ -25,7 +25,7 @@ public final class CraftAttackMain extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new BoatListener(), this);
 
-        new CraftAttackCommand().register();
+        new CraftAttackRootCommand().register();
     }
 
     @Override
