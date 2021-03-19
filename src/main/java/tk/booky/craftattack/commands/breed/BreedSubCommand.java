@@ -11,5 +11,6 @@ public class BreedSubCommand extends CommandAPICommand {
         withPermission("craftattack.command.breed");
 
         withSubcommand(new CurrentBreedsSubCommand());
+        withSubcommand(new BreedLeaderboardSubCommand());
     }
 }
