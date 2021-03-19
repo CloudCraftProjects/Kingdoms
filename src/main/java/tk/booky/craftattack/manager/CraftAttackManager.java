@@ -80,12 +80,7 @@ public final class CraftAttackManager {
     }
 
     public static void giveBoat(HumanEntity entity) {
-        for (ItemStack item : entity.getInventory().getContents()) {
-            if (item != null && Tag.ITEMS_BOATS.isTagged(item.getType())) {
-                return;
-            }
-        }
-
+        if (Arrays.stream(entity.getInventory().getContents()).filter(Objects::nonNull).anyMatch(item -> Tag.ITEMS_BOATS.isTagged(item.getType()))) return;
         entity.getInventory().addItem(new ItemStack(Material.OAK_BOAT));
     }
 
