@@ -2,6 +2,7 @@ package tk.booky.craftattack.commands.admin;
 // Created by booky10 in CraftAttack (15:03 01.03.21)
 
 import dev.jorel.commandapi.CommandAPICommand;
+import tk.booky.craftattack.commands.admin.breed.BreedSubCommand;
 
 public class AdminSubCommand extends CommandAPICommand {
 
@@ -21,5 +22,7 @@ public class AdminSubCommand extends CommandAPICommand {
 
         withSubcommand(new GetSpawnLocationSubCommand());
         withSubcommand(new SetSpawnLocationSubCommand());
+
+        withSubcommand(new BreedSubCommand());
     }
 }
