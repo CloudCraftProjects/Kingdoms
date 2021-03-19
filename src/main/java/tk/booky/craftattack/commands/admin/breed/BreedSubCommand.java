@@ -9,5 +9,7 @@ public class BreedSubCommand extends CommandAPICommand {
         super("breed");
 
         withPermission("craftattack.command.admin.breed");
+
+        withSubcommand(new ResetBreedsSubCommand());
     }
 }
