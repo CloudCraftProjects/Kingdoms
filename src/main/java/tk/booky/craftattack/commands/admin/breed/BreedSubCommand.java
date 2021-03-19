@@ -13,5 +13,6 @@ public class BreedSubCommand extends CommandAPICommand {
         withSubcommand(new ResetBreedsSubCommand());
 
         withSubcommand(new GetBreedsSubCommand());
+        withSubcommand(new SetBreedsSubCommand());
     }
 }
