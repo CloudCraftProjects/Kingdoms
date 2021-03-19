@@ -2,16 +2,20 @@ package tk.booky.craftattack.manager;
 // Created by booky10 in CraftAttack (14:51 01.03.21)
 
 import org.bukkit.*;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import tk.booky.craftattack.CraftAttackMain;
 
+import java.util.*;
+
 public final class CraftAttackManager {
 
     private static Location endLocation, spawnLocation;
     private static int endRadius, spawnRadius;
+    private static final Map<UUID, Integer> breeds = new HashMap<>();
 
     private static final CraftAttackMain plugin = CraftAttackMain.main;
     private static boolean saving;
@@ -24,6 +28,9 @@ public final class CraftAttackManager {
         endRadius = config.getInt("end.radius", -1);
         spawnLocation = config.getLocation("spawn.location", null);
         spawnRadius = config.getInt("spawn.radius", -1);
+
+        ConfigurationSection section = config.getConfigurationSection("breeds");
+        if (section != null) section.getKeys(false).forEach(key -> breeds.put(UUID.fromString(key), section.getInt(key)));
     }
 
     public static void save(boolean async) {
@@ -38,6 +45,8 @@ public final class CraftAttackManager {
             config.set("end.radius", endRadius);
             config.set("spawn.location", spawnLocation);
             config.set("spawn.radius", spawnRadius);
+
+            breeds.forEach((uuid, breeds) -> config.set("breeds." + uuid, breeds));
 
             plugin.saveConfig();
             saving = false;
@@ -110,5 +119,26 @@ public final class CraftAttackManager {
         if (getEndLocation() == null || distance <= -1 || (entity != null && entity.getGameMode().equals(GameMode.CREATIVE))) return false;
         else if (location.getWorld().getUID() != getEndLocation().getWorld().getUID()) return false;
         else return !(location.distance(getEndLocation()) > distance);
+    }
+
+    public static Map<UUID, Integer> getBreeds() {
+        return Collections.unmodifiableMap(breeds);
+    }
+
+    public static void addBreed(UUID uuid) {
+        breeds.put(uuid, breeds.getOrDefault(uuid, 0) + 1);
+        save(true);
+    }
+
+    public static int getBreeds(UUID uuid) {
+        return breeds.getOrDefault(uuid, 0);
+    }
+
+    public static void resetBreeds() {
+        breeds.clear();
+    }
+
+    public static Map.Entry<UUID, Integer> getHighestBreedEntry() {
+        return Collections.max(breeds.entrySet(), Map.Entry.comparingByValue());
     }
 }
