@@ -5,6 +5,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import tk.booky.craftattack.manager.CraftAttackManager;
 
@@ -38,5 +39,11 @@ public class MiscListener implements Listener {
                     break;
             }
         }
+    }
+
+    @EventHandler
+    public void onBreed(EntityBreedEvent event) {
+        if (event.getBreeder() == null) return;
+        CraftAttackManager.addBreed(event.getBreeder().getUniqueId());
     }
 }
