@@ -39,11 +39,11 @@ public class SetBreedsSubCommand extends CommandAPICommand implements CommandExe
                 CraftAttackManager.addBreeds(player.getUniqueId(), breeds);
 
                 if (breeds <= 0) {
-                    CommandAPI.fail("The animal breeds of the player have been set to zero!");
+                    sender.sendMessage("The animal breeds of the player have been set to zero!");
                 } else if (breeds == 1) {
-                    CommandAPI.fail("The animal breeds of the player have been set to one!");
+                    sender.sendMessage("The animal breeds of the player have been set to one!");
                 } else {
-                    CommandAPI.fail("The animal breeds of the player have been set to " + breeds + "!");
+                    sender.sendMessage("The animal breeds of the player have been set to " + breeds + "!");
                 }
             }
         } else {

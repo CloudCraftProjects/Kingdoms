@@ -136,6 +136,7 @@ public final class CraftAttackManager {
 
     public static void resetBreeds() {
         breeds.clear();
+        save(true);
     }
 
     public static Map.Entry<UUID, Integer> getHighestBreedEntry() {
