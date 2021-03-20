@@ -29,7 +29,9 @@ public class InteractListener implements Listener {
 
                         if (interactable) {
                             if (!(clickedBlock.getState() instanceof Container) || player.isSneaking()) {
-                                return;
+                                if (!Tag.TRAPDOORS.isTagged(clickedBlock.getType()) && !Tag.CAMPFIRES.isTagged(clickedBlock.getType()) && !Tag.FENCE_GATES.isTagged(clickedBlock.getType())) {
+                                    return;
+                                }
                             }
                         } else if (Tag.ITEMS_BOATS.isTagged(event.getMaterial())) {
                             return;
