@@ -31,7 +31,7 @@ public class BestBreederSubCommand extends CommandAPICommand implements CommandE
             Map.Entry<UUID, Integer> highest = CraftAttackManager.getHighestBreedEntry();
             OfflinePlayer player = Bukkit.getOfflinePlayer(highest.getKey());
 
-            if (player.hasPlayedBefore()) {
+            if (!player.hasPlayedBefore()) {
                 CommandAPI.fail("The top player hasn't played before!");
             } else {
                 sender.sendMessage("Currently player " + player.getName() + " is the highest breeder, with an amount of " + highest.getValue() + "!");
