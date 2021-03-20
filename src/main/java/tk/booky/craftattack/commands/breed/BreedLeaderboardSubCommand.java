@@ -38,8 +38,9 @@ public class BreedLeaderboardSubCommand extends CommandAPICommand implements Com
             sender.sendMessage(cachedLeaderboard);
         } else {
             List<Map.Entry<UUID, Integer>> entryList = new ArrayList<>(breeds.entrySet());
-            List<Map.Entry<UUID, Integer>> sorted = new ArrayList<>();
+            entryList.sort(Map.Entry.comparingByValue());
 
+            List<Map.Entry<UUID, Integer>> sorted = new ArrayList<>();
             int end = Math.min(7, entryList.size());
             for (int i = 0; i != end; i++) sorted.add(entryList.get(i));
 
