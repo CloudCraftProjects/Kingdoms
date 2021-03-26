@@ -7,12 +7,12 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import tk.booky.craftattack.CraftAttackMain;
 import tk.booky.craftattack.manager.CraftAttackManager;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class BreedLeaderboardSubCommand extends CommandAPICommand implements CommandExecutor {
@@ -37,20 +37,19 @@ public class BreedLeaderboardSubCommand extends CommandAPICommand implements Com
         } else if (cachedHash == breeds.hashCode()) {
             sender.sendMessage(cachedLeaderboard);
         } else {
-            List<Map.Entry<UUID, Integer>> entryList = new ArrayList<>(breeds.entrySet());
-            entryList.sort(Map.Entry.comparingByValue());
+            CommandAPI.fail("Cache is not up to date, it will be calculated...");
 
-            List<Map.Entry<UUID, Integer>> sorted = new ArrayList<>();
-            int end = Math.min(7, entryList.size());
-            for (int i = 0; i != end; i++) sorted.add(entryList.get(i));
+            Bukkit.getScheduler().runTaskAsynchronously(CraftAttackMain.main, () -> {
+                AtomicInteger place = new AtomicInteger();
+                String message = "Current leaderboard:\n" + breeds.entrySet().stream()
+                        .parallel().sorted(Map.Entry.comparingByValue()).limit(7)
+                        .map(entry -> place.incrementAndGet() + ". " + Bukkit.getOfflinePlayer(entry.getKey()).getName() + ": " + entry.getValue())
+                        .collect(Collectors.joining("\n"));
 
-            String joined = sorted.stream().map(entry -> (sorted.indexOf(entry) + 1) + ". " + Bukkit.getOfflinePlayer(entry.getKey()).getName() + ": " + entry.getValue()).collect(Collectors.joining("\n"));
-            String message = "Current leaderboard:\n" + joined;
-
-            cachedHash = breeds.hashCode();
-            cachedLeaderboard = message;
-
-            sender.sendMessage(message);
+                cachedHash = breeds.hashCode();
+                cachedLeaderboard = message;
+                sender.sendMessage(message);
+            });
         }
     }
 }
