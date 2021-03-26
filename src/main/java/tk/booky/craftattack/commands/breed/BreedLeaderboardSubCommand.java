@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import tk.booky.craftattack.CraftAttackMain;
 import tk.booky.craftattack.manager.CraftAttackManager;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -40,8 +41,8 @@ public class BreedLeaderboardSubCommand extends CommandAPICommand implements Com
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(CraftAttackMain.main, () -> {
                 AtomicInteger place = new AtomicInteger();
-                String message = "Current leaderboard:\n" + breeds.entrySet().stream()
-                        .parallel()
+                String message = "Current leaderboard:\n" + new ArrayList<>(breeds.entrySet())
+                        .parallelStream()
                         .sorted(Map.Entry.comparingByValue())
                         .sorted(Collections.reverseOrder())
                         .limit(7)
