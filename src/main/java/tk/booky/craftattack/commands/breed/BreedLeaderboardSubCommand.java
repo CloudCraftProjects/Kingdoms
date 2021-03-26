@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import tk.booky.craftattack.CraftAttackMain;
 import tk.booky.craftattack.manager.CraftAttackManager;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,7 +41,10 @@ public class BreedLeaderboardSubCommand extends CommandAPICommand implements Com
             Bukkit.getScheduler().runTaskAsynchronously(CraftAttackMain.main, () -> {
                 AtomicInteger place = new AtomicInteger();
                 String message = "Current leaderboard:\n" + breeds.entrySet().stream()
-                        .parallel().sorted(Map.Entry.comparingByValue()).limit(7)
+                        .parallel()
+                        .sorted(Map.Entry.comparingByValue())
+                        .sorted(Collections.reverseOrder())
+                        .limit(7)
                         .map(entry -> place.incrementAndGet() + ". " + Bukkit.getOfflinePlayer(entry.getKey()).getName() + ": " + entry.getValue())
                         .collect(Collectors.joining("\n"));
 
