@@ -37,8 +37,6 @@ public class BreedLeaderboardSubCommand extends CommandAPICommand implements Com
         } else if (cachedHash == breeds.hashCode()) {
             sender.sendMessage(cachedLeaderboard);
         } else {
-            CommandAPI.fail("Cache is not up to date, it will be calculated...");
-
             Bukkit.getScheduler().runTaskAsynchronously(CraftAttackMain.main, () -> {
                 AtomicInteger place = new AtomicInteger();
                 String message = "Current leaderboard:\n" + breeds.entrySet().stream()
@@ -50,6 +48,8 @@ public class BreedLeaderboardSubCommand extends CommandAPICommand implements Com
                 cachedLeaderboard = message;
                 sender.sendMessage(message);
             });
+
+            CommandAPI.fail("Cache is not up to date, it will be calculated...");
         }
     }
 }
