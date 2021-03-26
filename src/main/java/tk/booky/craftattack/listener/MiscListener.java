@@ -4,9 +4,11 @@ package tk.booky.craftattack.listener;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import tk.booky.craftattack.manager.CraftAttackManager;
 
 public class MiscListener implements Listener {
@@ -45,5 +47,15 @@ public class MiscListener implements Listener {
     public void onBreed(EntityBreedEvent event) {
         if (event.getBreeder() == null) return;
         CraftAttackManager.addBreeds(event.getBreeder().getUniqueId(), 1);
+    }
+
+    @EventHandler
+    public void onExplosion(EntityExplodeEvent event) {
+        if (CraftAttackManager.isInSpawn(event.getLocation(), null)) event.blockList().clear();
+    }
+
+    @EventHandler
+    public void onRedstone(BlockRedstoneEvent event) {
+        if (CraftAttackManager.isInSpawn(event.getBlock().getLocation(), null)) event.setNewCurrent(0);
     }
 }
