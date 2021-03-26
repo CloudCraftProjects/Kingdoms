@@ -7,10 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityBreedEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.*;
 import tk.booky.craftattack.manager.CraftAttackManager;
 
 public class MiscListener implements Listener {
@@ -19,7 +16,7 @@ public class MiscListener implements Listener {
     public void onDamage(EntityDamageEvent event) {
         if (!event.getEntityType().equals(EntityType.BOAT)) {
             if (CraftAttackManager.isInSpawn(event.getEntity().getLocation(), null) || CraftAttackManager.isInEnd(event.getEntity().getLocation(), null)) {
-                if (!event.getEntityType().equals(EntityType.PLAYER) || !((Player) event.getEntity()).getGameMode().equals(GameMode.CREATIVE)) {
+                if (!(event instanceof EntityDamageByEntityEvent) || !((EntityDamageByEntityEvent) event).getDamager().getType().equals(EntityType.PLAYER) || !((Player) ((EntityDamageByEntityEvent) event).getDamager()).getGameMode().equals(GameMode.CREATIVE)) {
                     event.setCancelled(true);
                 }
             }
