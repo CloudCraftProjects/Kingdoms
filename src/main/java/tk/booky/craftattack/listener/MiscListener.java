@@ -1,7 +1,9 @@
 package tk.booky.craftattack.listener;
 // Created by booky10 in CraftAttack (15:02 01.03.21)
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockRedstoneEvent;
@@ -17,7 +19,9 @@ public class MiscListener implements Listener {
     public void onDamage(EntityDamageEvent event) {
         if (!event.getEntityType().equals(EntityType.BOAT)) {
             if (CraftAttackManager.isInSpawn(event.getEntity().getLocation(), null) || CraftAttackManager.isInEnd(event.getEntity().getLocation(), null)) {
-                event.setCancelled(true);
+                if (!event.getEntityType().equals(EntityType.PLAYER) || !((Player) event.getEntity()).getGameMode().equals(GameMode.CREATIVE)) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
