@@ -1,3 +1,3 @@
-# CraftAttack
+# Kingdoms
 
-The CraftAttack plugin used to make the server a better place.
+The Kingdoms plugin used to make the server a better place.

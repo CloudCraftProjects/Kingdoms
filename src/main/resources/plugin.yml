@@ -1,6 +1,6 @@
-name: CraftAttack
+name: Kingdoms
 version: @version@
-main: tk.booky.craftattack.CraftAttackMain
+main: tk.booky.kingdoms.KingdomsMain
 api-version: 1.16
 prefix: CA
 authors: [ booky10 ]
