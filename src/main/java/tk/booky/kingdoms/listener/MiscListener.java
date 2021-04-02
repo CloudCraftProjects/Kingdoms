@@ -52,7 +52,9 @@ public class MiscListener implements Listener {
 
     @EventHandler
     public void onExplosion(EntityExplodeEvent event) {
-        if (KingdomsManager.isInSpawn(event.getLocation(), null)) event.blockList().clear();
+        if (event.getEntityType().equals(EntityType.CREEPER) || KingdomsManager.isInSpawn(event.getLocation(), null)) {
+            event.blockList().clear();
+        }
     }
 
     @EventHandler
