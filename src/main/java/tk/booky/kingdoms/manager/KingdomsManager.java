@@ -18,7 +18,7 @@ public final class KingdomsManager {
     private static final Map<UUID, Integer> breeds = new HashMap<>();
 
     private static final KingdomsMain plugin = KingdomsMain.main;
-    private static boolean saving;
+    private static boolean saving, endActivated;
 
     public static void load() {
         plugin.reloadConfig();
@@ -26,6 +26,7 @@ public final class KingdomsManager {
 
         endLocation = config.getLocation("end.location", null);
         endRadius = config.getInt("end.radius", -1);
+        endActivated = config.getBoolean("end.activated", false);
         spawnLocation = config.getLocation("spawn.location", null);
         spawnRadius = config.getInt("spawn.radius", -1);
 
@@ -43,6 +44,7 @@ public final class KingdomsManager {
 
             config.set("end.location", endLocation);
             config.set("end.radius", endRadius);
+            config.set("end.activated", endActivated);
             config.set("spawn.location", spawnLocation);
             config.set("spawn.radius", spawnRadius);
 
@@ -141,5 +143,14 @@ public final class KingdomsManager {
 
     public static Map.Entry<UUID, Integer> getHighestBreedEntry() {
         return Collections.max(breeds.entrySet(), Map.Entry.comparingByValue());
+    }
+
+    public static boolean isEndActivated() {
+        return endActivated;
+    }
+
+    public static void setEndActivated(boolean activate) {
+        endActivated = activate;
+        save(true);
     }
 }

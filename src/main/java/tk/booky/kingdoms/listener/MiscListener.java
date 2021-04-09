@@ -2,10 +2,12 @@ package tk.booky.kingdoms.listener;
 // Created by booky10 in CraftAttack (15:02 01.03.21)
 
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.*;
 import tk.booky.kingdoms.manager.KingdomsManager;
@@ -60,5 +62,14 @@ public class MiscListener implements Listener {
     @EventHandler
     public void onRedstone(BlockRedstoneEvent event) {
         if (KingdomsManager.isInSpawn(event.getBlock().getLocation(), null)) event.setNewCurrent(0);
+    }
+
+    @EventHandler
+    public void onEndPortal(BlockPlaceEvent event) {
+        if (!event.getItemInHand().getType().equals(Material.ENDER_EYE)) return;
+        if (!event.getBlock().getType().equals(Material.END_PORTAL_FRAME)) return;
+        if (KingdomsManager.isEndActivated()) return;
+
+        event.setCancelled(true);
     }
 }
