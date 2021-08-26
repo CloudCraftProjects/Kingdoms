@@ -7,9 +7,7 @@ public class TeleportSubCommand extends CommandAPICommand {
 
     public TeleportSubCommand() {
         super("teleport");
-
-        withPermission("kingdoms.command.teleport");
-        withAliases("tp");
+        withPermission("kingdoms.command.teleport").withAliases("tp");
 
         withSubcommand(new BedSubCommand());
         withSubcommand(new EndSubCommand());

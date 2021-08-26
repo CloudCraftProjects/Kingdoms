@@ -1,8 +1,9 @@
 name: Kingdoms
-version: @version@
+version: ${version}
 main: tk.booky.kingdoms.KingdomsMain
-api-version: 1.16
-prefix: CA
+api-version: 1.17
+prefix: KD
 authors: [ booky10 ]
 website: https://booky.tk/
+depend: [ CommandAPI ]
 load: POSTWORLD

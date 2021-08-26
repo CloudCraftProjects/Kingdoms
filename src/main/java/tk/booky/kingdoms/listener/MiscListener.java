@@ -1,27 +1,25 @@
 package tk.booky.kingdoms.listener;
 // Created by booky10 in CraftAttack (15:02 01.03.21)
 
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.entity.*;
-import tk.booky.kingdoms.manager.KingdomsManager;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import tk.booky.kingdoms.utils.KingdomsManager;
 
 public class MiscListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (!event.getEntityType().equals(EntityType.BOAT)) {
-            if (KingdomsManager.isInSpawn(event.getEntity().getLocation(), null) || KingdomsManager.isInEnd(event.getEntity().getLocation(), null)) {
-                if (!(event instanceof EntityDamageByEntityEvent) || !((EntityDamageByEntityEvent) event).getDamager().getType().equals(EntityType.PLAYER) || !((Player) ((EntityDamageByEntityEvent) event).getDamager()).getGameMode().equals(GameMode.CREATIVE)) {
-                    event.setCancelled(true);
-                }
-            }
+        if (KingdomsManager.isInSpawn(event.getEntity().getLocation(), null)) {
+            event.setCancelled(true);
+        } else if (KingdomsManager.isInEnd(event.getEntity().getLocation(), null)) {
+            event.setCancelled(true);
         }
     }
 
@@ -47,29 +45,29 @@ public class MiscListener implements Listener {
     }
 
     @EventHandler
-    public void onBreed(EntityBreedEvent event) {
-        if (event.getBreeder() == null) return;
-        KingdomsManager.addBreeds(event.getBreeder().getUniqueId(), 1);
-    }
-
-    @EventHandler
     public void onExplosion(EntityExplodeEvent event) {
-        if (event.getEntityType().equals(EntityType.CREEPER) || KingdomsManager.isInSpawn(event.getLocation(), null)) {
+        if (event.getEntityType().equals(EntityType.CREEPER)) {
+            event.blockList().clear();
+        } else if (KingdomsManager.isInSpawn(event.getLocation(), null)) {
             event.blockList().clear();
         }
     }
 
     @EventHandler
     public void onRedstone(BlockRedstoneEvent event) {
-        if (KingdomsManager.isInSpawn(event.getBlock().getLocation(), null)) event.setNewCurrent(0);
+        if (KingdomsManager.isInSpawn(event.getBlock().getLocation(), null)) {
+            event.setNewCurrent(0);
+        }
     }
 
     @EventHandler
     public void onEndPortal(BlockPlaceEvent event) {
-        if (!event.getItemInHand().getType().equals(Material.ENDER_EYE)) return;
-        if (!event.getBlock().getType().equals(Material.END_PORTAL_FRAME)) return;
-        if (KingdomsManager.isEndActivated()) return;
-
-        event.setCancelled(true);
+        if (event.getItemInHand().getType().equals(Material.ENDER_EYE)) {
+            if (event.getBlock().getType().equals(Material.END_PORTAL_FRAME)) {
+                if (!KingdomsManager.isEndActivated()) {
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 }

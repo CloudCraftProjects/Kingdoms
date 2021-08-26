@@ -1,17 +1,24 @@
 package tk.booky.kingdoms;
 
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPICommand;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.booky.kingdoms.commands.KingdomsRootCommand;
 import tk.booky.kingdoms.listener.BlockListener;
-import tk.booky.kingdoms.listener.BoatListener;
 import tk.booky.kingdoms.listener.InteractListener;
 import tk.booky.kingdoms.listener.MiscListener;
-import tk.booky.kingdoms.manager.KingdomsManager;
+import tk.booky.kingdoms.utils.KingdomsManager;
 
 public final class KingdomsMain extends JavaPlugin {
 
     public static KingdomsMain main;
+    private CommandAPICommand command;
+
+    @Override
+    public void onLoad() {
+        (command = new KingdomsRootCommand()).register();
+    }
 
     @Override
     public void onEnable() {
@@ -23,13 +30,11 @@ public final class KingdomsMain extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new InteractListener(), this);
         Bukkit.getPluginManager().registerEvents(new MiscListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
-        // Bukkit.getPluginManager().registerEvents(new BoatListener(), this);
-
-        new KingdomsRootCommand().register();
     }
 
     @Override
     public void onDisable() {
         KingdomsManager.save(false);
+        CommandAPI.unregister(command.getName(), true);
     }
 }
