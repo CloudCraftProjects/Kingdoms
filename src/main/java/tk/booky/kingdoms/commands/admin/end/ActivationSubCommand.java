@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
@@ -13,8 +14,11 @@ import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
 
 public class ActivationSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    public ActivationSubCommand() {
+    private final Plugin plugin;
+
+    public ActivationSubCommand(Plugin plugin) {
         super("activate");
+        this.plugin = plugin;
 
         withPermission("kingdoms.command.admin.end.activate");
         withArguments(new BooleanArgument("active"));
@@ -29,7 +33,7 @@ public class ActivationSubCommand extends CommandAPICommand implements CommandEx
         if (KingdomsManager.isEndActivated() == activate) {
             fail("The end is already " + (activate ? "" : "de") + "activated!");
         } else {
-            KingdomsManager.setEndActivated(activate);
+            KingdomsManager.setEndActivated(plugin, activate);
             message(sender, "The end has been " + (activate ? "" : "de") + "activated!");
         }
     }

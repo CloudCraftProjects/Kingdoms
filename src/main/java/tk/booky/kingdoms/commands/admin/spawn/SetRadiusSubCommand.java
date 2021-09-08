@@ -7,6 +7,7 @@ import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
@@ -14,8 +15,11 @@ import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
 
 public class SetRadiusSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    public SetRadiusSubCommand() {
+    private final Plugin plugin;
+
+    public SetRadiusSubCommand(Plugin plugin) {
         super("radius");
+        this.plugin = plugin;
 
         withPermission("kingdoms.command.admin.spawn.radius.set");
         withArguments(new LiteralArgument("set"), new IntegerArgument("radius", 0));
@@ -29,9 +33,7 @@ public class SetRadiusSubCommand extends CommandAPICommand implements CommandExe
         if (KingdomsManager.getSpawnRadius() == radius) {
             fail("The spawn radius is already at this size!");
         } else {
-            KingdomsManager.setSpawnRadius(radius);
-            KingdomsManager.save(true);
-
+            KingdomsManager.setSpawnRadius(plugin, radius);
             message(sender, "The spawn radius has been set to " + radius + "!");
         }
     }

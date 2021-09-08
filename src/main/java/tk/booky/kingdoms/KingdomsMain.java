@@ -8,24 +8,22 @@ import tk.booky.kingdoms.commands.KingdomsRootCommand;
 import tk.booky.kingdoms.listener.BlockListener;
 import tk.booky.kingdoms.listener.InteractListener;
 import tk.booky.kingdoms.listener.MiscListener;
+import tk.booky.kingdoms.listener.TeamListener;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 public final class KingdomsMain extends JavaPlugin {
 
-    public static KingdomsMain main;
     private CommandAPICommand command;
 
     @Override
     public void onLoad() {
-        (command = new KingdomsRootCommand()).register();
+        (command = new KingdomsRootCommand(this)).register();
     }
 
     @Override
     public void onEnable() {
-        main = this;
-
         saveDefaultConfig();
-        KingdomsManager.load();
+        KingdomsManager.load(this);
 
         Bukkit.getPluginManager().registerEvents(new InteractListener(), this);
         Bukkit.getPluginManager().registerEvents(new MiscListener(), this);
@@ -34,7 +32,7 @@ public final class KingdomsMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        KingdomsManager.save(false);
+        KingdomsManager.save(this, false);
         CommandAPI.unregister(command.getName(), true);
     }
 }

@@ -6,21 +6,19 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
-
-import static tk.booky.kingdoms.KingdomsMain.main;
 
 public final class KingdomsManager {
 
     private static Location endLocation, spawnLocation;
+    private static boolean saving, endActivated;
     private static int endRadius, spawnRadius;
 
-    private static boolean saving, endActivated;
+    public static void load(Plugin plugin) {
+        plugin.reloadConfig();
 
-    public static void load() {
-        main.reloadConfig();
-        FileConfiguration config = main.getConfig();
-
+        FileConfiguration config = plugin.getConfig();
         endLocation = config.getLocation("end.location", null);
         endRadius = config.getInt("end.radius", -1);
         endActivated = config.getBoolean("end.activated", false);
@@ -28,62 +26,30 @@ public final class KingdomsManager {
         spawnRadius = config.getInt("spawn.radius", -1);
     }
 
-    public static void save(boolean async) {
+    public static void save(Plugin plugin, boolean async) {
         if (!saving) {
             saving = true;
 
             Runnable runnable = () -> {
-                main.reloadConfig();
-                FileConfiguration config = main.getConfig();
+                plugin.reloadConfig();
 
+                FileConfiguration config = plugin.getConfig();
                 config.set("end.location", endLocation);
                 config.set("end.radius", endRadius);
                 config.set("end.activated", endActivated);
                 config.set("spawn.location", spawnLocation);
                 config.set("spawn.radius", spawnRadius);
 
-                main.saveConfig();
+                plugin.saveConfig();
                 saving = false;
             };
 
             if (async) {
-                Bukkit.getScheduler().runTaskAsynchronously(main, runnable);
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
             } else {
                 runnable.run();
             }
         }
-    }
-
-    public static @Nullable Location getEndLocation() {
-        return endLocation;
-    }
-
-    public static int getEndRadius() {
-        return endRadius;
-    }
-
-    public static @Nullable Location getSpawnLocation() {
-        return spawnLocation;
-    }
-
-    public static int getSpawnRadius() {
-        return spawnRadius;
-    }
-
-    public static void setEndLocation(Location endLocation) {
-        KingdomsManager.endLocation = endLocation;
-    }
-
-    public static void setEndRadius(int endRadius) {
-        KingdomsManager.endRadius = endRadius;
-    }
-
-    public static void setSpawnRadius(int spawnRadius) {
-        KingdomsManager.spawnRadius = spawnRadius;
-    }
-
-    public static void setSpawnLocation(Location spawnLocation) {
-        KingdomsManager.spawnLocation = spawnLocation;
     }
 
     public static boolean isInSpawn(Location location, @Nullable HumanEntity entity) {
@@ -110,12 +76,48 @@ public final class KingdomsManager {
         }
     }
 
+    public static @Nullable Location getEndLocation() {
+        return endLocation;
+    }
+
+    public static int getEndRadius() {
+        return endRadius;
+    }
+
+    public static @Nullable Location getSpawnLocation() {
+        return spawnLocation;
+    }
+
+    public static int getSpawnRadius() {
+        return spawnRadius;
+    }
+
     public static boolean isEndActivated() {
         return endActivated;
     }
 
-    public static void setEndActivated(boolean activate) {
+    public static void setEndLocation(Plugin plugin, Location endLocation) {
+        KingdomsManager.endLocation = endLocation;
+        save(plugin, true);
+    }
+
+    public static void setEndRadius(Plugin plugin, int endRadius) {
+        KingdomsManager.endRadius = endRadius;
+        save(plugin, true);
+    }
+
+    public static void setSpawnRadius(Plugin plugin, int spawnRadius) {
+        KingdomsManager.spawnRadius = spawnRadius;
+        save(plugin, true);
+    }
+
+    public static void setSpawnLocation(Plugin plugin, Location spawnLocation) {
+        KingdomsManager.spawnLocation = spawnLocation;
+        save(plugin, true);
+    }
+
+    public static void setEndActivated(Plugin plugin, boolean activate) {
         endActivated = activate;
-        save(true);
+        save(plugin, true);
     }
 }

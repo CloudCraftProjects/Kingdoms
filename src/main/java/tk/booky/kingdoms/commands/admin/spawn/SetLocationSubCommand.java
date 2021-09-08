@@ -10,6 +10,7 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
@@ -17,8 +18,11 @@ import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
 
 public class SetLocationSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    public SetLocationSubCommand() {
+    private final Plugin plugin;
+
+    public SetLocationSubCommand(Plugin plugin) {
         super("location");
+        this.plugin = plugin;
 
         withPermission("kingdoms.command.admin.spawn.location.set");
         withArguments(new LiteralArgument("set"), new LocationArgument("location", LocationType.PRECISE_POSITION), new AngleArgument("yaw"));
@@ -33,9 +37,7 @@ public class SetLocationSubCommand extends CommandAPICommand implements CommandE
         if (location.equals(KingdomsManager.getSpawnLocation())) {
             fail("The spawn location is already at the exact same position!");
         } else {
-            KingdomsManager.setSpawnLocation(location);
-            KingdomsManager.save(true);
-
+            KingdomsManager.setSpawnLocation(plugin, location);
             message(sender, "The spawn location has been set!");
         }
     }
