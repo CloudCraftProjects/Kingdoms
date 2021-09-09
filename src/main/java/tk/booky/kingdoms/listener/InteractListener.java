@@ -8,19 +8,21 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-public class InteractListener implements Listener {
+public record InteractListener(KingdomsManager manager) implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        Location location = event.getClickedBlock() != null ? event.getClickedBlock().getLocation() : event.getPlayer().getLocation();
-        if (KingdomsManager.isInSpawn(location, event.getPlayer())) {
+        Location location = event.getClickedBlock() != null ?
+            event.getClickedBlock().getLocation() : event.getPlayer().getLocation();
+
+        if (manager.isInSpawn(location, event.getPlayer())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEntityEvent event) {
-        if (KingdomsManager.isInSpawn(event.getRightClicked().getLocation(), event.getPlayer())) {
+        if (manager.isInSpawn(event.getRightClicked().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
         }
     }

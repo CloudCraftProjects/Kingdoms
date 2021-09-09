@@ -10,23 +10,23 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
 import tk.booky.kingdoms.utils.KingdomsManager;
-
-import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
-import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
 
 public class SetLocationSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    private final Plugin plugin;
+    private final KingdomsManager manager;
 
-    public SetLocationSubCommand(Plugin plugin) {
+    public SetLocationSubCommand(KingdomsManager manager) {
         super("location");
-        this.plugin = plugin;
+        this.manager = manager;
 
-        withPermission("kingdoms.command.admin.end.location.set");
-        withArguments(new LiteralArgument("set"), new LocationArgument("location", LocationType.PRECISE_POSITION), new AngleArgument("yaw"));
-        executes(this);
+        withArguments(
+            new LiteralArgument("set"),
+            new LocationArgument("location", LocationType.PRECISE_POSITION),
+            new AngleArgument("yaw")
+        );
+
+        withPermission("kingdoms.command.admin.end.location.set").executes(this);
     }
 
     @Override
@@ -34,11 +34,11 @@ public class SetLocationSubCommand extends CommandAPICommand implements CommandE
         Location location = (Location) args[0];
         location.setYaw((float) args[1]);
 
-        if (location.equals(KingdomsManager.getEndLocation())) {
-            fail("The end location is already at the exact same position!");
+        if (location.equals(manager.config().endLocation())) {
+            manager.fail("The end location is already at the exact same position!");
         } else {
-            KingdomsManager.setEndLocation(plugin, location);
-            message(sender, "The end location has been set!");
+            manager.config().endLocation(location);
+            manager.message(sender, "The end location has been set!");
         }
     }
 }

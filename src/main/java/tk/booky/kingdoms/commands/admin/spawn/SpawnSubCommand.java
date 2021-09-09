@@ -2,18 +2,18 @@ package tk.booky.kingdoms.commands.admin.spawn;
 // Created by booky10 in Kingdoms (20:34 26.08.21)
 
 import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.plugin.Plugin;
+import tk.booky.kingdoms.utils.KingdomsManager;
 
 public class SpawnSubCommand extends CommandAPICommand {
 
-    public SpawnSubCommand(Plugin plugin) {
+    public SpawnSubCommand(KingdomsManager manager) {
         super("spawn");
 
         withPermission("kingdoms.command.admin.spawn");
 
-        withSubcommand(new GetLocationSubCommand());
-        withSubcommand(new SetLocationSubCommand(plugin));
-        withSubcommand(new GetRadiusSubCommand());
-        withSubcommand(new SetRadiusSubCommand(plugin));
+        withSubcommand(new GetLocationSubCommand(manager));
+        withSubcommand(new SetLocationSubCommand(manager));
+        withSubcommand(new GetRadiusSubCommand(manager));
+        withSubcommand(new SetRadiusSubCommand(manager));
     }
 }

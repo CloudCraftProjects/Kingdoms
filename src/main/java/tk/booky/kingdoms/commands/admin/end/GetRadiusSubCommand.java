@@ -8,27 +8,27 @@ import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
-import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
-
 public class GetRadiusSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    public GetRadiusSubCommand() {
-        super("radius");
+    private final KingdomsManager manager;
 
-        withPermission("kingdoms.command.admin.end.radius.get");
+    public GetRadiusSubCommand(KingdomsManager manager) {
+        super("radius");
+        this.manager = manager;
+
         withArguments(new LiteralArgument("get"));
-        executes(this);
+
+        withPermission("kingdoms.command.admin.end.radius.get").executes(this);
     }
 
     @Override
     public void run(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
-        int radius = KingdomsManager.getEndRadius();
+        int radius = manager.config().endRadius();
 
         if (radius <= -1) {
-            fail("The end radius has not been set yet!");
+            manager.fail("The end radius has not been set yet!");
         } else {
-            message(sender, "The end radius is currently at " + radius + " blocks!");
+            manager.message(sender, "The end radius is currently at " + radius + " blocks!");
         }
     }
 }

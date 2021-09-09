@@ -9,40 +9,40 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-public class BlockListener implements Listener {
+public record BlockListener(KingdomsManager manager) implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        if (KingdomsManager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
+        if (manager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
-        } else if (KingdomsManager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
+        } else if (manager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        if (KingdomsManager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
+        if (manager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
-        } else if (KingdomsManager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
+        } else if (manager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onBucket(PlayerBucketFillEvent event) {
-        if (KingdomsManager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
+        if (manager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
-        } else if (KingdomsManager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
+        } else if (manager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onBucket(PlayerBucketEmptyEvent event) {
-        if (KingdomsManager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
+        if (manager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
-        } else if (KingdomsManager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
+        } else if (manager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
         }
     }

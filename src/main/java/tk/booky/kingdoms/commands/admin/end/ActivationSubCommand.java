@@ -6,35 +6,30 @@ import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
 import tk.booky.kingdoms.utils.KingdomsManager;
-
-import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
-import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
 
 public class ActivationSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    private final Plugin plugin;
+    private final KingdomsManager manager;
 
-    public ActivationSubCommand(Plugin plugin) {
+    public ActivationSubCommand(KingdomsManager manager) {
         super("activate");
-        this.plugin = plugin;
+        this.manager = manager;
 
-        withPermission("kingdoms.command.admin.end.activate");
         withArguments(new BooleanArgument("active"));
 
-        executes(this);
+        withPermission("kingdoms.command.admin.end.activate").executes(this);
     }
 
     @Override
     public void run(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
         boolean activate = (boolean) args[0];
 
-        if (KingdomsManager.isEndActivated() == activate) {
-            fail("The end is already " + (activate ? "" : "de") + "activated!");
+        if (manager.config().endActivated() == activate) {
+            manager.fail("The end is already " + (activate ? "" : "de") + "activated!");
         } else {
-            KingdomsManager.setEndActivated(plugin, activate);
-            message(sender, "The end has been " + (activate ? "" : "de") + "activated!");
+            manager.config().endActivated(activate);
+            manager.message(sender, "The end has been " + (activate ? "" : "de") + "activated!");
         }
     }
 }

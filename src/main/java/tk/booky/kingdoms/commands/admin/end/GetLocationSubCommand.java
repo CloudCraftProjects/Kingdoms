@@ -9,27 +9,27 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
-import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
-
 public class GetLocationSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    public GetLocationSubCommand() {
-        super("location");
+    private final KingdomsManager manager;
 
-        withPermission("kingdoms.command.admin.end.location.get");
+    public GetLocationSubCommand(KingdomsManager manager) {
+        super("location");
+        this.manager = manager;
+
         withArguments(new LiteralArgument("get"));
-        executes(this);
+
+        withPermission("kingdoms.command.admin.end.location.get").executes(this);
     }
 
     @Override
     public void run(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
-        Location location = KingdomsManager.getEndLocation();
+        Location location = manager.config().endLocation();
 
         if (location == null) {
-            fail("The end location has not been set yet!");
+            manager.fail("The end location has not been set yet!");
         } else {
-            message(sender, String.format(
+            manager.message(sender, String.format(
                 "The end location is currently at %s %s %s %s %s in %s!",
                 location.getX(), location.getY(), location.getZ(),
                 location.getYaw(), location.getPitch(),

@@ -12,20 +12,20 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-public class MiscListener implements Listener {
+public record MiscListener(KingdomsManager manager) implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (KingdomsManager.isInSpawn(event.getEntity().getLocation(), null)) {
+        if (manager.isInSpawn(event.getEntity().getLocation(), null)) {
             event.setCancelled(true);
-        } else if (KingdomsManager.isInEnd(event.getEntity().getLocation(), null)) {
+        } else if (manager.isInEnd(event.getEntity().getLocation(), null)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        if (KingdomsManager.isInSpawn(event.getEntity().getLocation(), null)) {
+        if (manager.isInSpawn(event.getEntity().getLocation(), null)) {
             switch (event.getSpawnReason()) {
                 case CUSTOM:
                 case CURED:
@@ -48,14 +48,14 @@ public class MiscListener implements Listener {
     public void onExplosion(EntityExplodeEvent event) {
         if (event.getEntityType().equals(EntityType.CREEPER)) {
             event.blockList().clear();
-        } else if (KingdomsManager.isInSpawn(event.getLocation(), null)) {
+        } else if (manager.isInSpawn(event.getLocation(), null)) {
             event.blockList().clear();
         }
     }
 
     @EventHandler
     public void onRedstone(BlockRedstoneEvent event) {
-        if (KingdomsManager.isInSpawn(event.getBlock().getLocation(), null)) {
+        if (manager.isInSpawn(event.getBlock().getLocation(), null)) {
             event.setNewCurrent(0);
         }
     }
@@ -64,7 +64,7 @@ public class MiscListener implements Listener {
     public void onEndPortal(BlockPlaceEvent event) {
         if (event.getItemInHand().getType().equals(Material.ENDER_EYE)) {
             if (event.getBlock().getType().equals(Material.END_PORTAL_FRAME)) {
-                if (!KingdomsManager.isEndActivated()) {
+                if (!manager.config().endActivated()) {
                     event.setCancelled(true);
                 }
             }

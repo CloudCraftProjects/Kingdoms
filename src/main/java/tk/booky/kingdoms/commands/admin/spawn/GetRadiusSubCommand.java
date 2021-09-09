@@ -8,13 +8,13 @@ import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
-import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
-
 public class GetRadiusSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    public GetRadiusSubCommand() {
+    private final KingdomsManager manager;
+
+    public GetRadiusSubCommand(KingdomsManager manager) {
         super("radius");
+        this.manager = manager;
 
         withPermission("kingdoms.command.admin.spawn.radius.get");
         withArguments(new LiteralArgument("get"));
@@ -23,12 +23,12 @@ public class GetRadiusSubCommand extends CommandAPICommand implements CommandExe
 
     @Override
     public void run(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
-        int radius = KingdomsManager.getSpawnRadius();
+        int radius = manager.config().spawnRadius();
 
         if (radius <= -1) {
-            fail("The spawn radius has not been set yet!");
+            manager.fail("The spawn radius has not been set yet!");
         } else {
-            message(sender, "The spawn radius is currently at " + radius + " blocks!");
+            manager.message(sender, "The spawn radius is currently at " + radius + " blocks!");
         }
     }
 }

@@ -9,13 +9,13 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
-import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
-
 public class GetLocationSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    public GetLocationSubCommand() {
+    private final KingdomsManager manager;
+
+    public GetLocationSubCommand(KingdomsManager manager) {
         super("location");
+        this.manager = manager;
 
         withPermission("kingdoms.command.admin.spawn.location.get");
         withArguments(new LiteralArgument("get"));
@@ -24,12 +24,12 @@ public class GetLocationSubCommand extends CommandAPICommand implements CommandE
 
     @Override
     public void run(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
-        Location location = KingdomsManager.getSpawnLocation();
+        Location location = manager.config().spawnLocation();
 
         if (location == null) {
-            fail("The spawn location has not been set yet!");
+            manager.fail("The spawn location has not been set yet!");
         } else {
-            message(sender, String.format(
+            manager.message(sender, String.format(
                 "The spawn location is currently at %s %s %s %s %s in %s!",
                 location.getX(), location.getY(), location.getZ(),
                 location.getYaw(), location.getPitch(),

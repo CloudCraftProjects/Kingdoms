@@ -7,19 +7,15 @@ import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
 import tk.booky.kingdoms.utils.KingdomsManager;
-
-import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
-import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
 
 public class SetRadiusSubCommand extends CommandAPICommand implements CommandExecutor {
 
-    private final Plugin plugin;
+    private final KingdomsManager manager;
 
-    public SetRadiusSubCommand(Plugin plugin) {
+    public SetRadiusSubCommand(KingdomsManager manager) {
         super("radius");
-        this.plugin = plugin;
+        this.manager = manager;
 
         withPermission("kingdoms.command.admin.spawn.radius.set");
         withArguments(new LiteralArgument("set"), new IntegerArgument("radius", 0));
@@ -30,11 +26,11 @@ public class SetRadiusSubCommand extends CommandAPICommand implements CommandExe
     public void run(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
         int radius = (int) args[0];
 
-        if (KingdomsManager.getSpawnRadius() == radius) {
-            fail("The spawn radius is already at this size!");
+        if (manager.config().spawnRadius() == radius) {
+            manager.fail("The spawn radius is already at this size!");
         } else {
-            KingdomsManager.setSpawnRadius(plugin, radius);
-            message(sender, "The spawn radius has been set to " + radius + "!");
+            manager.config().spawnRadius(radius);
+            manager.message(sender, "The spawn radius has been set to " + radius + "!");
         }
     }
 }

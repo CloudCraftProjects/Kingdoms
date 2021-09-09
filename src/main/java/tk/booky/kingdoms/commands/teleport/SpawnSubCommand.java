@@ -11,15 +11,15 @@ import tk.booky.kingdoms.utils.KingdomsManager;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static tk.booky.kingdoms.utils.KingdomsUtilities.fail;
-import static tk.booky.kingdoms.utils.KingdomsUtilities.message;
-
 public class SpawnSubCommand extends CommandAPICommand implements PlayerCommandExecutor {
 
     private static final HashMap<UUID, Long> lastUse = new HashMap<>();
+    private final KingdomsManager manager;
 
-    public SpawnSubCommand() {
+    public SpawnSubCommand(KingdomsManager manager) {
         super("spawn");
+        this.manager = manager;
+
         withPermission("kingdoms.command.teleport.spawn").executesPlayer(this);
     }
 
@@ -27,15 +27,15 @@ public class SpawnSubCommand extends CommandAPICommand implements PlayerCommandE
     public void run(Player sender, Object[] args) throws WrapperCommandSyntaxException {
         if (!sender.hasPermission("kingdoms.bypass.cooldown.spawn") && lastUse.getOrDefault(sender.getUniqueId(), 0L) + 60000 > System.currentTimeMillis()) {
             long seconds = (lastUse.get(sender.getUniqueId()) + 60000 - System.currentTimeMillis()) / 1000 + 1;
-            fail("You still have to wait " + seconds + " more seconds before you can use this command again!");
+            manager.fail("You still have to wait " + seconds + " more seconds before you can use this command again!");
         } else {
             lastUse.put(sender.getUniqueId(), System.currentTimeMillis());
 
-            if (KingdomsManager.getSpawnLocation() == null) {
-                fail("The spawn location has not been set yet!");
+            if (manager.config().spawnLocation() == null) {
+                manager.fail("The spawn location has not been set yet!");
             } else {
-                sender.teleportAsync(KingdomsManager.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
-                message(sender, "You have been brought to the spawn location!");
+                sender.teleportAsync(manager.config().spawnLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
+                manager.message(sender, "You have been brought to the spawn location!");
             }
         }
     }
