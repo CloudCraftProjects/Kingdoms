@@ -33,13 +33,29 @@ public class KingdomsManager {
         .append(text('D', AQUA, BOLD))
         .append(text(']', GRAY))
         .append(space()).build();
+
     private final KingdomsConfig config;
     private final Plugin plugin;
+    private PvpTimerTask task;
+    private Boolean cloudPlane;
     private World overworld;
 
     public KingdomsManager(Plugin plugin, KingdomsConfig config) {
         this.plugin = plugin;
         this.config = config;
+    }
+
+    public boolean isRunningCloudPlane() {
+        if (cloudPlane == null) {
+            try {
+                Class.forName("tk.booky.cloudplane.CloudPlaneConfig");
+                return cloudPlane = true;
+            } catch (ClassNotFoundException exception) {
+                return cloudPlane = false;
+            }
+        } else {
+            return cloudPlane;
+        }
     }
 
     @SuppressWarnings("deprecation") // it's "just" unsafe ¯\_(ツ)_/¯
@@ -100,15 +116,19 @@ public class KingdomsManager {
         }
     }
 
+    public PvpTimerTask task() {
+        return task == null ? task = new PvpTimerTask(this) : task;
+    }
+
     public KingdomsConfig config() {
         return config;
     }
 
-    public Plugin plugin() {
-        return plugin;
-    }
-
     public World overworld() {
         return overworld;
+    }
+
+    public Plugin plugin() {
+        return plugin;
     }
 }

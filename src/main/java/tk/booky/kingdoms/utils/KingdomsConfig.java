@@ -11,8 +11,8 @@ import java.io.IOException;
 public class KingdomsConfig {
 
     private final File configurationFile;
+    private int endRadius = 0, spawnRadius = 0, pvpTimesStart = 0, pvpTimesEnd = 0;
     private Location endLocation, spawnLocation;
-    private int endRadius = 0, spawnRadius = 0;
     private boolean endActivated = true;
 
     public KingdomsConfig(File configurationFile) {
@@ -25,6 +25,9 @@ public class KingdomsConfig {
             return saveConfiguration();
         } else {
             FileConfiguration configuration = YamlConfiguration.loadConfiguration(configurationFile);
+
+            pvpTimesStart = configuration.getInt("pvp-times.start", pvpTimesStart);
+            pvpTimesEnd = configuration.getInt("pvp-times.end", pvpTimesEnd);
 
             endActivated = configuration.getBoolean("end.activated", endActivated);
             endLocation = configuration.getLocation("end.location", endLocation);
@@ -40,6 +43,9 @@ public class KingdomsConfig {
     public KingdomsConfig saveConfiguration() {
         try {
             FileConfiguration configuration = new YamlConfiguration();
+
+            configuration.set("pvp-times.start", pvpTimesStart);
+            configuration.set("pvp-times.end", pvpTimesEnd);
 
             configuration.set("end.activated", endActivated);
             configuration.set("end.location", endLocation);
@@ -59,35 +65,32 @@ public class KingdomsConfig {
         return configurationFile;
     }
 
-    public Location endLocation() {
-        return endLocation;
+    public int endRadius() {
+        return endRadius;
     }
 
-    public void endLocation(Location endLocation) {
-        this.endLocation = endLocation;
-        saveConfiguration();
+    public int spawnRadius() {
+        return spawnRadius;
+    }
+
+    public int pvpTimesStart() {
+        return pvpTimesStart;
+    }
+
+    public int pvpTimesEnd() {
+        return pvpTimesEnd;
+    }
+
+    public Location endLocation() {
+        return endLocation;
     }
 
     public Location spawnLocation() {
         return spawnLocation;
     }
 
-    public void spawnLocation(Location spawnLocation) {
-        this.spawnLocation = spawnLocation;
-        saveConfiguration();
-    }
-
     public boolean endActivated() {
         return endActivated;
-    }
-
-    public void endActivated(boolean endActivated) {
-        this.endActivated = endActivated;
-        saveConfiguration();
-    }
-
-    public int endRadius() {
-        return endRadius;
     }
 
     public void endRadius(int endRadius) {
@@ -95,12 +98,33 @@ public class KingdomsConfig {
         saveConfiguration();
     }
 
-    public int spawnRadius() {
-        return spawnRadius;
-    }
-
     public void spawnRadius(int spawnRadius) {
         this.spawnRadius = spawnRadius;
+        saveConfiguration();
+    }
+
+    public void pvpTimesStart(int pvpTimesStart) {
+        this.pvpTimesStart = pvpTimesStart;
+        saveConfiguration();
+    }
+
+    public void pvpTimesEnd(int pvpTimesEnd) {
+        this.pvpTimesEnd = pvpTimesEnd;
+        saveConfiguration();
+    }
+
+    public void endLocation(Location endLocation) {
+        this.endLocation = endLocation;
+        saveConfiguration();
+    }
+
+    public void spawnLocation(Location spawnLocation) {
+        this.spawnLocation = spawnLocation;
+        saveConfiguration();
+    }
+
+    public void endActivated(boolean endActivated) {
+        this.endActivated = endActivated;
         saveConfiguration();
     }
 }

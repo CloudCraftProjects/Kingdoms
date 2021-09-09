@@ -3,6 +3,7 @@ package tk.booky.kingdoms.commands.admin;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import tk.booky.kingdoms.commands.admin.end.EndSubCommand;
+import tk.booky.kingdoms.commands.admin.pvp.PvpSubCommand;
 import tk.booky.kingdoms.commands.admin.spawn.SpawnSubCommand;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
@@ -15,5 +16,9 @@ public class AdminSubCommand extends CommandAPICommand {
         withSubcommand(new EndSubCommand(manager));
         withSubcommand(new SpawnSubCommand(manager));
         withSubcommand(new StartSubCommand(manager));
+
+        if (manager.isRunningCloudPlane()) {
+            withSubcommand(new PvpSubCommand(manager));
+        }
     }
 }

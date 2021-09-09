@@ -12,6 +12,7 @@ import tk.booky.kingdoms.utils.KingdomsConfig;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public final class KingdomsMain extends JavaPlugin {
 
@@ -33,10 +34,20 @@ public final class KingdomsMain extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new InteractListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new MiscListener(manager), this);
+
+        if (manager.isRunningCloudPlane()) {
+            manager.task().timer().scheduleAtFixedRate(manager.task(), 0, TimeUnit.MINUTES.toMillis(1));
+        } else {
+            getLogger().warning("The pvp times feature is not available, because cloudplane is not used.");
+        }
     }
 
     @Override
     public void onDisable() {
+        if (manager.isRunningCloudPlane()) {
+            manager.task().timer().cancel();
+        }
+
         configuration.saveConfiguration();
         CommandAPI.unregister(command.getName(), true);
     }
