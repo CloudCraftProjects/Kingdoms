@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import tk.booky.kingdoms.commands.admin.end.EndSubCommand;
 import tk.booky.kingdoms.commands.admin.pvp.PvpSubCommand;
 import tk.booky.kingdoms.commands.admin.spawn.SpawnSubCommand;
+import tk.booky.kingdoms.commands.admin.team.TeamSubCommand;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 public class AdminSubCommand extends CommandAPICommand {
@@ -14,6 +15,7 @@ public class AdminSubCommand extends CommandAPICommand {
         withPermission("kingdoms.command.admin");
 
         withSubcommand(new EndSubCommand(manager));
+        withSubcommand(new TeamSubCommand(manager));
         withSubcommand(new SpawnSubCommand(manager));
         withSubcommand(new StartSubCommand(manager));
 
