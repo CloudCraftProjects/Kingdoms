@@ -4,6 +4,8 @@ package tk.booky.kingdoms.utils;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import tk.booky.kingdoms.team.KingdomsTeam;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +19,7 @@ public class KingdomsConfig {
 
     public KingdomsConfig(File configurationFile) {
         this.configurationFile = configurationFile;
-        reloadConfiguration().saveConfiguration();
+        ConfigurationSerialization.registerClass(KingdomsTeam.class);
     }
 
     public KingdomsConfig reloadConfiguration() {
@@ -36,6 +38,12 @@ public class KingdomsConfig {
             spawnLocation = configuration.getLocation("spawn.location", spawnLocation);
             spawnRadius = configuration.getInt("spawn.radius", spawnRadius);
 
+            for (KingdomsTeam team : KingdomsTeam.values()) {
+                // No need to do any more stuff here because it
+                // gets loaded into the instance automatically
+                configuration.get("teams." + team.name().toLowerCase());
+            }
+
             return this;
         }
     }
@@ -53,6 +61,10 @@ public class KingdomsConfig {
 
             configuration.set("spawn.location", spawnLocation);
             configuration.set("spawn.radius", spawnRadius);
+
+            for (KingdomsTeam team : KingdomsTeam.values()) {
+                configuration.set("teams." + team.name().toLowerCase(), team);
+            }
 
             configuration.save(configurationFile);
             return this;

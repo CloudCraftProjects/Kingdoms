@@ -31,6 +31,10 @@ public final class KingdomsMain extends JavaPlugin {
     public void onEnable() {
         manager.loadOverworld();
 
+        configuration
+            .reloadConfiguration()
+            .saveConfiguration();
+
         Bukkit.getPluginManager().registerEvents(new InteractListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new MiscListener(manager), this);
