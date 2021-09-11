@@ -8,6 +8,7 @@ import tk.booky.kingdoms.commands.KingdomsRootCommand;
 import tk.booky.kingdoms.listener.BlockListener;
 import tk.booky.kingdoms.listener.InteractListener;
 import tk.booky.kingdoms.listener.MiscListener;
+import tk.booky.kingdoms.listener.SitListener;
 import tk.booky.kingdoms.utils.KingdomsConfig;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
@@ -38,6 +39,7 @@ public final class KingdomsMain extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new InteractListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new MiscListener(manager), this);
+        Bukkit.getPluginManager().registerEvents(new SitListener(manager), this);
 
         if (manager.isRunningCloudPlane()) {
             manager.task().timer().scheduleAtFixedRate(manager.task(), 0, TimeUnit.MINUTES.toMillis(1));
