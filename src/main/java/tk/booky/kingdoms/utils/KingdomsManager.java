@@ -75,7 +75,7 @@ public class KingdomsManager {
     }
 
     public void message(Audience audience, Component component) {
-        audience.sendMessage(Identity.nil(), prefix(component.color(GREEN)), MessageType.SYSTEM);
+        audience.sendMessage(Identity.nil(), PREFIX.append(component), MessageType.SYSTEM);
     }
 
     public Component prefix(String message) {

@@ -1,6 +1,7 @@
 package tk.booky.kingdoms.team;
 // Created by booky10 in Kingdoms (15:31 10.09.21)
 
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -20,15 +21,20 @@ import static net.kyori.adventure.identity.Identity.nil;
 @SerializableAs("kingdoms-team")
 public enum KingdomsTeam implements ConfigurationSerializable {
 
-    YELLOW,
-    GREEN,
-    BLUE,
-    RED;
+    YELLOW(NamedTextColor.YELLOW),
+    GREEN(NamedTextColor.GREEN),
+    BLUE(NamedTextColor.BLUE),
+    RED(NamedTextColor.RED);
 
     private final Set<UUID> members = new HashSet<>();
+    private final NamedTextColor color;
     private Location treasureLocation;
     private UUID king = nil().uuid();
     private int coins = 10_000;
+
+    KingdomsTeam(NamedTextColor color) {
+        this.color = color;
+    }
 
     @SuppressWarnings({"unchecked", "unused"})
     public static KingdomsTeam deserialize(Map<String, Object> serialized) {
@@ -64,6 +70,10 @@ public enum KingdomsTeam implements ConfigurationSerializable {
 
     public Set<UUID> members() {
         return members;
+    }
+
+    public NamedTextColor color() {
+        return color;
     }
 
     public Location treasureLocation() {

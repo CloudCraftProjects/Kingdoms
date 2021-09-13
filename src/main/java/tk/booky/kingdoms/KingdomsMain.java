@@ -8,6 +8,7 @@ import tk.booky.kingdoms.commands.KingdomsRootCommand;
 import tk.booky.kingdoms.listener.BlockListener;
 import tk.booky.kingdoms.listener.InteractListener;
 import tk.booky.kingdoms.listener.MiscListener;
+import tk.booky.kingdoms.listener.SelectionListener;
 import tk.booky.kingdoms.listener.SitListener;
 import tk.booky.kingdoms.utils.KingdomsConfig;
 import tk.booky.kingdoms.utils.KingdomsManager;
@@ -36,6 +37,7 @@ public final class KingdomsMain extends JavaPlugin {
             .reloadConfiguration()
             .saveConfiguration();
 
+        Bukkit.getPluginManager().registerEvents(new SelectionListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new InteractListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new MiscListener(manager), this);
