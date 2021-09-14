@@ -15,6 +15,9 @@ import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.Nullable;
 import tk.booky.kingdoms.team.KingdomsTeam;
 
@@ -40,8 +43,9 @@ public class KingdomsManager {
 
     private final KingdomsConfig config;
     private final Plugin plugin;
-    private PvpTimerTask task;
+    private Objective coinsObjective;
     private Boolean cloudPlane;
+    private PvpTimerTask task;
     private World overworld;
 
     public KingdomsManager(Plugin plugin, KingdomsConfig config) {
@@ -110,10 +114,11 @@ public class KingdomsManager {
         return PREFIX.append(component);
     }
 
-    public World loadOverworld() {
+    public KingdomsManager loadOverworld() {
         for (World world : Bukkit.getWorlds()) {
             if (world.getEnvironment() == World.Environment.NORMAL) {
-                return overworld = world;
+                overworld = world;
+                return this;
             }
         }
 
@@ -138,6 +143,32 @@ public class KingdomsManager {
         } else {
             return target.distanceSquared(source) <= radiusSquared;
         }
+    }
+
+    public KingdomsManager loadCoinsObjective() {
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        Objective coinsObjective = scoreboard.getObjective(DisplaySlot.BELOW_NAME);
+
+        if (coinsObjective == null) {
+            coinsObjective = scoreboard.getObjective("kingdoms_coins");
+        }
+
+        if (coinsObjective != null) {
+            if (!coinsObjective.isModifiable() || !coinsObjective.getCriteria().equals("dummy")) {
+                coinsObjective.setDisplaySlot(null);
+            } else {
+                this.coinsObjective = coinsObjective;
+                return this;
+            }
+        }
+
+        this.coinsObjective = scoreboard.registerNewObjective("kingdoms_coins", "dummy", prefix(text("Coins", WHITE)));
+        this.coinsObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+        return this;
+    }
+
+    public Objective coinsObjective() {
+        return coinsObjective;
     }
 
     public PvpTimerTask task() {

@@ -10,6 +10,7 @@ import tk.booky.kingdoms.listener.InteractListener;
 import tk.booky.kingdoms.listener.MiscListener;
 import tk.booky.kingdoms.listener.SelectionListener;
 import tk.booky.kingdoms.listener.SitListener;
+import tk.booky.kingdoms.listener.TeamListener;
 import tk.booky.kingdoms.utils.KingdomsConfig;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
@@ -31,7 +32,9 @@ public final class KingdomsMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        manager.loadOverworld();
+        manager
+            .loadCoinsObjective()
+            .loadOverworld();
 
         configuration
             .reloadConfiguration()
@@ -40,6 +43,7 @@ public final class KingdomsMain extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new SelectionListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new InteractListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(manager), this);
+        Bukkit.getPluginManager().registerEvents(new TeamListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new MiscListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new SitListener(manager), this);
 
