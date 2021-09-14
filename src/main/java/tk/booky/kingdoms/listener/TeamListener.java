@@ -9,12 +9,21 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Score;
 import tk.booky.kingdoms.team.KingdomsTeam;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static org.bukkit.Bukkit.broadcast;
+import static org.bukkit.Bukkit.getPlayer;
 import static org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING;
 import static org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT;
 import static org.bukkit.Sound.ENTITY_PLAYER_LEVELUP;
@@ -62,6 +71,24 @@ public record TeamListener(KingdomsManager manager) implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
+        for (KingdomsTeam team : KingdomsTeam.values()) {
+            if (event.getEntity().getUniqueId().equals(team.king())) {
+                broadcast(manager.prefix(text("The king " + event.getEntity().getName() + " of team " + team.name() + " has died! Members have received slowness and weakness for five minutes.", GREEN)));
+                List<PotionEffect> effects = Arrays.asList(
+                    new PotionEffect(PotionEffectType.SLOW, 300, 2, false, false),
+                    new PotionEffect(PotionEffectType.WEAKNESS, 300, 0, false, false)
+                );
+
+                for (UUID uuid : team.members()) {
+                    Player player = getPlayer(uuid);
+                    if (player != null && !player.getUniqueId().equals(team.king())) {
+                        player.addPotionEffects(effects);
+                    }
+                }
+                break;
+            }
+        }
+
         Score score = manager.coinsObjective().getScore(event.getEntity().getName());
         if (score.isScoreSet() && score.getScore() > 0) {
             Player killer = event.getEntity().getKiller();
