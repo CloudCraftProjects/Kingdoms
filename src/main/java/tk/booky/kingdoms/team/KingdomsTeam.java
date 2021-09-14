@@ -3,6 +3,7 @@ package tk.booky.kingdoms.team;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     BLUE(NamedTextColor.BLUE),
     RED(NamedTextColor.RED);
 
+    private static final Map<Block, KingdomsTeam> BY_TREASURE = new HashMap<>();
     private final Set<UUID> members = new HashSet<>();
     private final NamedTextColor color;
     private Location treasureLocation;
@@ -36,9 +38,17 @@ public enum KingdomsTeam implements ConfigurationSerializable {
         this.color = color;
     }
 
+    public static KingdomsTeam byTreasure(Block block) {
+        return BY_TREASURE.get(block);
+    }
+
     @SuppressWarnings({"unchecked", "unused"})
     public static KingdomsTeam deserialize(Map<String, Object> serialized) {
         KingdomsTeam team = valueOf((String) serialized.get("name"));
+
+        if (team.treasureLocation != null) {
+            BY_TREASURE.remove(team.treasureLocation.getBlock());
+        }
 
         team.treasureLocation = (Location) serialized.getOrDefault("treasure-location", team.treasureLocation);
         team.king = UUID.fromString((String) serialized.getOrDefault("king", team.king.toString()));
@@ -47,6 +57,10 @@ public enum KingdomsTeam implements ConfigurationSerializable {
         team.members.clear();
         for (String member : (List<String>) serialized.getOrDefault("members", Collections.emptyList())) {
             team.members.add(UUID.fromString(member));
+        }
+
+        if (team.treasureLocation != null) {
+            BY_TREASURE.put(team.treasureLocation.getBlock(), team);
         }
 
         return team;
@@ -81,6 +95,14 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     }
 
     public void treasureLocation(Location treasureLocation) {
+        if (this.treasureLocation != null) {
+            BY_TREASURE.remove(this.treasureLocation.getBlock());
+        }
+
+        if (treasureLocation != null) {
+            BY_TREASURE.put(treasureLocation.getBlock(), this);
+        }
+
         this.treasureLocation = treasureLocation;
     }
 
