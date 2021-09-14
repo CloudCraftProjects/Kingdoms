@@ -31,6 +31,8 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 import static org.bukkit.Bukkit.broadcast;
+import static org.bukkit.Sound.ENTITY_PLAYER_LEVELUP;
+import static org.bukkit.SoundCategory.AMBIENT;
 
 public class SelectionListener implements Listener {
 
@@ -104,17 +106,17 @@ public class SelectionListener implements Listener {
                 manager.message(event.getPlayer(), text("You have already selected your team.", RED));
             } else {
                 KingdomsTeam team = KingdomsTeam.valueOf(event.getMessage().substring(22));
-                team.members().add(event.getPlayer().getUniqueId());
-
-                manager.message(event.getPlayer(), "You have selected team " + team.name().toLowerCase() + ".");
-                broadcast(manager.prefix(text(event.getPlayer().getName() + " has selected team " + team.name().toLowerCase() + ".", GREEN)));
-
                 event.getPlayer().teleportAsync(team.treasureLocation() == null
                         ? event.getPlayer().getWorld().getSpawnLocation() : team.treasureLocation())
                     .whenComplete((success, throwable) -> {
                         if (success && throwable == null) {
                             event.getPlayer().setGameMode(GameMode.SURVIVAL);
                             event.getPlayer().removePotionEffect(PotionEffectType.BLINDNESS);
+                            team.members().add(event.getPlayer().getUniqueId());
+
+                            manager.message(event.getPlayer(), "You have selected team " + team.name().toLowerCase() + ".");
+                            broadcast(manager.prefix(text(event.getPlayer().getName() + " has selected team " + team.name().toLowerCase() + ".", GREEN)));
+                            event.getPlayer().playSound(event.getPlayer().getLocation(), ENTITY_PLAYER_LEVELUP, AMBIENT, 1f, 1f);
                         } else {
                             event.getPlayer().kick(manager.prefix(text("An internal error occurred while selecting team.", RED)));
                         }
