@@ -97,22 +97,22 @@ public class KingdomsManager {
     }
 
     public boolean isInSpawn(Location location, @Nullable HumanEntity entity) {
-        return isInRadius(location, entity, config.spawnLocation(), config.spawnRadius());
+        return isInRadius(location, entity, config.spawnLocation(), config.spawnRadiusSquared());
     }
 
     public boolean isInEnd(Location location, @Nullable HumanEntity entity) {
-        return isInRadius(location, entity, config.endLocation(), config.endRadius());
+        return isInRadius(location, entity, config.endLocation(), config.endRadiusSquared());
     }
 
-    public boolean isInRadius(Location target, @Nullable HumanEntity entity, Location source, int radius) {
-        if (source == null || radius <= 0) {
+    public boolean isInRadius(Location target, @Nullable HumanEntity entity, Location source, int radiusSquared) {
+        if (source == null || radiusSquared <= 0) {
             return false;
         } else if (entity != null && entity.getGameMode() == GameMode.CREATIVE) {
             return false;
         } else if (target.getWorld() != source.getWorld()) {
             return false;
         } else {
-            return target.distance(source) <= radius;
+            return target.distanceSquared(source) <= radiusSquared;
         }
     }
 

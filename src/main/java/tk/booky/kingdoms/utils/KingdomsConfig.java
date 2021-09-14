@@ -14,6 +14,7 @@ public class KingdomsConfig {
 
     private final File configurationFile;
     private int endRadius = 0, spawnRadius = 0, pvpTimesStart = 0, pvpTimesEnd = 0;
+    private int endRadiusSquared = 0, spawnRadiusSquared = 0;
     private Location endLocation, spawnLocation;
     private boolean endActivated = true;
 
@@ -44,6 +45,8 @@ public class KingdomsConfig {
                 configuration.get("teams." + team.name().toLowerCase());
             }
 
+            spawnRadiusSquared = spawnRadius * spawnRadius;
+            endRadiusSquared = endRadius * endRadius;
             return this;
         }
     }
@@ -71,6 +74,14 @@ public class KingdomsConfig {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+    }
+
+    public int endRadiusSquared() {
+        return endRadiusSquared;
+    }
+
+    public int spawnRadiusSquared() {
+        return spawnRadiusSquared;
     }
 
     public File configurationFile() {
@@ -106,12 +117,12 @@ public class KingdomsConfig {
     }
 
     public void endRadius(int endRadius) {
-        this.endRadius = endRadius;
+        endRadiusSquared = (this.endRadius = endRadius) * endRadius;
         saveConfiguration();
     }
 
     public void spawnRadius(int spawnRadius) {
-        this.spawnRadius = spawnRadius;
+        spawnRadiusSquared = (this.spawnRadius = spawnRadius) * spawnRadius;
         saveConfiguration();
     }
 
