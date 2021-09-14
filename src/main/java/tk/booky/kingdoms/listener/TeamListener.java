@@ -38,12 +38,14 @@ public record TeamListener(KingdomsManager manager) implements Listener {
                 } else if (team.coins() > 0) {
                     Score score = manager.coinsObjective().getScore(event.getPlayer().getName());
                     if (!score.isScoreSet() || score.getScore() <= 0) {
-                        manager.message(team, text(event.getPlayer().getName() + " took 500 coins from your team.", RED));
-                        manager.message(event.getPlayer(), "You have taken 500 coins from team " + team.name().toLowerCase() + ".");
+                        int takenCoins = Math.min(500, team.coins());
+
+                        manager.message(team, text(event.getPlayer().getName() + " took " + takenCoins + " coins from your team.", RED));
+                        manager.message(event.getPlayer(), "You have taken " + takenCoins + " coins from team " + team.name().toLowerCase() + ".");
                         event.getPlayer().playSound(event.getTo(), BLOCK_NOTE_BLOCK_PLING, AMBIENT, 1f, 2f);
 
-                        manager.coinsObjective().getScore(event.getPlayer().getName()).setScore(500);
-                        team.coins(team.coins() - 500);
+                        manager.coinsObjective().getScore(event.getPlayer().getName()).setScore(takenCoins);
+                        team.coins(team.coins() - takenCoins);
                     } else {
                         manager.message(event.getPlayer(), text("You have already coins on you.", RED));
                         event.getPlayer().playSound(event.getTo(), ENTITY_ENDERMAN_TELEPORT, AMBIENT, 1f, 0.5f);
