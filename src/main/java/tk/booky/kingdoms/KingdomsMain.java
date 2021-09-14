@@ -47,6 +47,7 @@ public final class KingdomsMain extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MiscListener(manager), this);
         Bukkit.getPluginManager().registerEvents(new SitListener(manager), this);
 
+        manager.coinBossbar().start(this);
         if (manager.isRunningCloudPlane()) {
             manager.task().timer().scheduleAtFixedRate(manager.task(), 0, TimeUnit.MINUTES.toMillis(1));
         } else {

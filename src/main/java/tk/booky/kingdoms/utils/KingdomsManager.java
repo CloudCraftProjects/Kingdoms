@@ -43,6 +43,7 @@ public class KingdomsManager {
 
     private final KingdomsConfig config;
     private final Plugin plugin;
+    private CoinBossbarTask coinBossbar;
     private Objective coinsObjective;
     private Boolean cloudPlane;
     private PvpTimerTask task;
@@ -167,12 +168,16 @@ public class KingdomsManager {
         return this;
     }
 
-    public Objective coinsObjective() {
-        return coinsObjective;
+    public CoinBossbarTask coinBossbar() {
+        return coinBossbar == null ? coinBossbar = new CoinBossbarTask() : coinBossbar;
     }
 
     public PvpTimerTask task() {
         return task == null ? task = new PvpTimerTask(this) : task;
+    }
+
+    public Objective coinsObjective() {
+        return coinsObjective;
     }
 
     public KingdomsConfig config() {

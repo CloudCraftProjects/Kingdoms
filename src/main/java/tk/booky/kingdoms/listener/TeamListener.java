@@ -6,7 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Score;
 import tk.booky.kingdoms.team.KingdomsTeam;
 import tk.booky.kingdoms.utils.KingdomsManager;
@@ -82,5 +84,15 @@ public record TeamListener(KingdomsManager manager) implements Listener {
             manager.message(event.getEntity(), text("Could not find killer, deleting " + score.getScore() + " coins...", RED));
             score.setScore(0);
         }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().showBossBar(manager.coinBossbar().bossBar());
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        event.getPlayer().hideBossBar(manager.coinBossbar().bossBar());
     }
 }

@@ -22,20 +22,22 @@ import static net.kyori.adventure.identity.Identity.nil;
 @SerializableAs("kingdoms-team")
 public enum KingdomsTeam implements ConfigurationSerializable {
 
-    YELLOW(NamedTextColor.YELLOW),
-    GREEN(NamedTextColor.GREEN),
-    BLUE(NamedTextColor.BLUE),
-    RED(NamedTextColor.RED);
+    YELLOW(NamedTextColor.YELLOW, 'Y'),
+    GREEN(NamedTextColor.GREEN, 'G'),
+    BLUE(NamedTextColor.BLUE, 'B'),
+    RED(NamedTextColor.RED, 'R');
 
     private static final Map<Block, KingdomsTeam> BY_TREASURE = new HashMap<>();
     private final Set<UUID> members = new HashSet<>();
     private final NamedTextColor color;
+    private final char character;
     private Location treasureLocation;
     private UUID king = nil().uuid();
     private int coins = 10_000;
 
-    KingdomsTeam(NamedTextColor color) {
+    KingdomsTeam(NamedTextColor color, char character) {
         this.color = color;
+        this.character = character;
     }
 
     public static KingdomsTeam byTreasure(Block block) {
@@ -88,6 +90,10 @@ public enum KingdomsTeam implements ConfigurationSerializable {
 
     public NamedTextColor color() {
         return color;
+    }
+
+    public char character() {
+        return character;
     }
 
     public Location treasureLocation() {
