@@ -13,8 +13,12 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
+import tk.booky.kingdoms.team.KingdomsTeam;
+
+import java.util.UUID;
 
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
@@ -68,6 +72,26 @@ public class KingdomsManager {
     public void fail(Component component) throws WrapperCommandSyntaxException {
         String message = Bukkit.getUnsafe().legacyComponentSerializer().serialize(prefix(component.color(RED)));
         throw new WrapperCommandSyntaxException(new SimpleCommandExceptionType(new LiteralMessage(message)).create());
+    }
+
+    public void message(KingdomsTeam team, String message) {
+        Component component = prefix(text(message, GREEN));
+        for (UUID member : team.members()) {
+            Player player = Bukkit.getPlayer(member);
+            if (player != null) {
+                player.sendMessage(Identity.nil(), component, MessageType.SYSTEM);
+            }
+        }
+    }
+
+    public void message(KingdomsTeam team, Component component) {
+        component = PREFIX.append(component);
+        for (UUID member : team.members()) {
+            Player player = Bukkit.getPlayer(member);
+            if (player != null) {
+                player.sendMessage(Identity.nil(), component, MessageType.SYSTEM);
+            }
+        }
     }
 
     public void message(Audience audience, String message) {
