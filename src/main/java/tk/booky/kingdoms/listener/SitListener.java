@@ -88,7 +88,7 @@ public class SitListener implements Listener {
             location.setPitch(entity.getLocation().getPitch());
             location.setYaw(entity.getLocation().getYaw());
 
-            if (!location.clone().add(0, entity.getEyeHeight(), 0).getBlock().getType().isAir()) {
+            if (location.clone().add(0, entity.getEyeHeight(), 0).getBlock().getType().isSolid()) {
                 Block chairBlock = event.getDismounted().getLocation().getBlock();
                 // noinspection ConstantConditions // this method does null checks, it will work
                 chairBlock.breakNaturally(null, true);
