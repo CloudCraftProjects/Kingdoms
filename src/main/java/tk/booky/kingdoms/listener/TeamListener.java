@@ -2,6 +2,7 @@ package tk.booky.kingdoms.listener;
 // Created by booky10 in Kingdoms (16:54 14.09.21)
 
 import org.bukkit.GameMode;
+import org.bukkit.GameRule;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,9 +32,19 @@ import static org.bukkit.SoundCategory.AMBIENT;
 
 public record TeamListener(KingdomsManager manager) implements Listener {
 
+    @SuppressWarnings("unchecked")
+    private static final GameRule<Boolean> ALLOW_PVP_GAMERULE = (GameRule<Boolean>) GameRule.getByName("allowPvP");
+
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         if (event.hasExplicitlyChangedBlock() && event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+            if (ALLOW_PVP_GAMERULE != null) {
+                Boolean value = event.getTo().getWorld().getGameRuleValue(ALLOW_PVP_GAMERULE);
+                if (value != null && !value) {
+                    return;
+                }
+            }
+
             KingdomsTeam team = KingdomsTeam.byTreasure(event.getTo().getBlock());
             if (team != null) {
                 if (team.members().contains(event.getPlayer().getUniqueId())) {
