@@ -108,7 +108,7 @@ public class KingdomsManager {
     }
 
     public Component prefix(String message) {
-        return PREFIX.append(text(message));
+        return PREFIX.append(text(message, GREEN));
     }
 
     public Component prefix(Component component) {

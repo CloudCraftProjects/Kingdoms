@@ -68,6 +68,16 @@ public record TeamListener(KingdomsManager manager) implements Listener {
 
                         manager.coinsObjective().getScore(event.getPlayer().getName()).setScore(takenCoins);
                         team.coins(team.coins() - takenCoins);
+
+                        if (team.coins() <= 0) {
+                            broadcast(text("Team " + team.name().toLowerCase() + " has no more coins. It is dead.", RED));
+                            for (UUID member : team.members()) {
+                                Player player = getPlayer(member);
+                                if (player != null) {
+                                    player.kick(text("Your team has no more coins and is dead. Re-join to select another team.", RED));
+                                }
+                            }
+                        }
                     } else {
                         manager.message(event.getPlayer(), text("You have already coins on you.", RED));
                         event.getPlayer().playSound(event.getTo(), ENTITY_ENDERMAN_TELEPORT, AMBIENT, 1f, 0.5f);

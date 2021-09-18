@@ -3,6 +3,7 @@ package tk.booky.kingdoms.commands;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import tk.booky.kingdoms.commands.admin.AdminSubCommand;
+import tk.booky.kingdoms.commands.team.TeamSubCommand;
 import tk.booky.kingdoms.commands.teleport.TeleportSubCommand;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
@@ -16,5 +17,6 @@ public class KingdomsRootCommand extends CommandAPICommand {
 
         withSubcommand(new TeleportSubCommand(manager));
         withSubcommand(new AdminSubCommand(manager));
+        withSubcommand(new TeamSubCommand(manager));
     }
 }
