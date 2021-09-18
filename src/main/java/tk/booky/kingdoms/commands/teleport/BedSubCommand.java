@@ -9,12 +9,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static org.bukkit.Bukkit.getScheduler;
 
 public class BedSubCommand extends CommandAPICommand implements PlayerCommandExecutor {
 
-    private static final HashMap<UUID, Long> LAST_USED = new HashMap<>();
+    private final Set<UUID> currentlyTeleporting = new HashSet<>();
     private final KingdomsManager manager;
 
     public BedSubCommand(KingdomsManager manager) {
@@ -26,20 +31,31 @@ public class BedSubCommand extends CommandAPICommand implements PlayerCommandExe
 
     @Override
     public void run(Player sender, Object[] args) throws WrapperCommandSyntaxException {
-        if (!sender.hasPermission("kingdoms.bypass.cooldown.bed") && LAST_USED.getOrDefault(sender.getUniqueId(), 0L) + 60000 > System.currentTimeMillis()) {
-            long seconds = (LAST_USED.get(sender.getUniqueId()) + 60000 - System.currentTimeMillis()) / 1000 + 1;
-            manager.fail("You still have to wait " + seconds + " more seconds before you can use this command again!");
-        } else {
-            LAST_USED.put(sender.getUniqueId(), System.currentTimeMillis());
-            Location location = sender.getBedSpawnLocation();
+        if (currentlyTeleporting.add(sender.getUniqueId())) {
+            manager.message(sender, "Please don't move, you will get teleported in five seconds.");
+            Location oldLocation = sender.getLocation().toBlockLocation();
 
-            if (location == null) {
-                sender.teleportAsync(manager.overworld().getSpawnLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
-                manager.message(sender, "Your bed was broken and you have been send to the world spawn!");
-            } else {
-                sender.teleportAsync(location, PlayerTeleportEvent.TeleportCause.COMMAND);
-                manager.message(sender, "You have been brought back to your bed!");
-            }
+            getScheduler().runTaskLater(manager.plugin(), () -> {
+                currentlyTeleporting.remove(sender.getUniqueId());
+
+                if (sender.isOnline()) {
+                    if (oldLocation.equals(sender.getLocation().toBlockLocation())) {
+                        Location location = sender.getBedSpawnLocation();
+
+                        if (location == null) {
+                            sender.teleportAsync(manager.overworld().getSpawnLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
+                            manager.message(sender, "Your bed was broken and you have been send to the world spawn!");
+                        } else {
+                            sender.teleportAsync(location, PlayerTeleportEvent.TeleportCause.COMMAND);
+                            manager.message(sender, "You have been brought back to your bed!");
+                        }
+                    } else {
+                        manager.message(sender, text("You have moved.", RED));
+                    }
+                }
+            }, 5 * 20);
+        } else {
+            manager.fail("You are already teleporting.");
         }
     }
 }

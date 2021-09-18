@@ -4,16 +4,22 @@ package tk.booky.kingdoms.commands.teleport;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static org.bukkit.Bukkit.getScheduler;
 
 public class EndSubCommand extends CommandAPICommand implements PlayerCommandExecutor {
 
-    private static final HashMap<UUID, Long> LAST_USE = new HashMap<>();
+    private final Set<UUID> currentlyTeleporting = new HashSet<>();
     private final KingdomsManager manager;
 
     public EndSubCommand(KingdomsManager manager) {
@@ -25,17 +31,27 @@ public class EndSubCommand extends CommandAPICommand implements PlayerCommandExe
 
     @Override
     public void run(Player sender, Object[] args) throws WrapperCommandSyntaxException {
-        if (!sender.hasPermission("kingdoms.bypass.cooldown.end") && LAST_USE.getOrDefault(sender.getUniqueId(), 0L) + 60000 > System.currentTimeMillis()) {
-            long seconds = (LAST_USE.get(sender.getUniqueId()) + 60000 - System.currentTimeMillis()) / 1000 + 1;
-            manager.fail("You still have to wait " + seconds + " more seconds before you can use this command again!");
+        if (manager.config().endLocation() == null) {
+            manager.fail("The end location has not been set yet!");
         } else {
-            LAST_USE.put(sender.getUniqueId(), System.currentTimeMillis());
+            if (currentlyTeleporting.add(sender.getUniqueId())) {
+                manager.message(sender, "Please don't move, you will get teleported in five seconds.");
+                Location oldLocation = sender.getLocation().toBlockLocation();
 
-            if (manager.config().endLocation() == null) {
-                manager.fail("The end location has not been set yet!");
+                getScheduler().runTaskLater(manager.plugin(), () -> {
+                    currentlyTeleporting.remove(sender.getUniqueId());
+
+                    if (sender.isOnline()) {
+                        if (oldLocation.equals(sender.getLocation().toBlockLocation())) {
+                            sender.teleportAsync(manager.config().endLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
+                            manager.message(sender, "You have been brought to the end location!");
+                        } else {
+                            manager.message(sender, text("You have moved.", RED));
+                        }
+                    }
+                }, 5 * 20);
             } else {
-                sender.teleportAsync(manager.config().endLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
-                manager.message(sender, "You have been brought to the end location!");
+                manager.fail("You are already teleporting.");
             }
         }
     }

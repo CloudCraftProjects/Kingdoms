@@ -4,16 +4,23 @@ package tk.booky.kingdoms.commands.teleport;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static org.bukkit.Bukkit.getScheduler;
 
 public class SpawnSubCommand extends CommandAPICommand implements PlayerCommandExecutor {
 
-    private static final HashMap<UUID, Long> lastUse = new HashMap<>();
+    private final Set<UUID> currentlyTeleporting = new HashSet<>();
     private final KingdomsManager manager;
 
     public SpawnSubCommand(KingdomsManager manager) {
@@ -25,17 +32,27 @@ public class SpawnSubCommand extends CommandAPICommand implements PlayerCommandE
 
     @Override
     public void run(Player sender, Object[] args) throws WrapperCommandSyntaxException {
-        if (!sender.hasPermission("kingdoms.bypass.cooldown.spawn") && lastUse.getOrDefault(sender.getUniqueId(), 0L) + 60000 > System.currentTimeMillis()) {
-            long seconds = (lastUse.get(sender.getUniqueId()) + 60000 - System.currentTimeMillis()) / 1000 + 1;
-            manager.fail("You still have to wait " + seconds + " more seconds before you can use this command again!");
+        if (manager.config().spawnLocation() == null) {
+            manager.fail("The spawn location has not been set yet!");
         } else {
-            lastUse.put(sender.getUniqueId(), System.currentTimeMillis());
+            if (currentlyTeleporting.add(sender.getUniqueId())) {
+                manager.message(sender, "Please don't move, you will get teleported in five seconds.");
+                Location oldLocation = sender.getLocation().toBlockLocation();
 
-            if (manager.config().spawnLocation() == null) {
-                manager.fail("The spawn location has not been set yet!");
+                getScheduler().runTaskLater(manager.plugin(), () -> {
+                    currentlyTeleporting.remove(sender.getUniqueId());
+
+                    if (sender.isOnline()) {
+                        if (oldLocation.equals(sender.getLocation().toBlockLocation())) {
+                            sender.teleportAsync(manager.config().spawnLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
+                            manager.message(sender, "You have been brought to the spawn location!");
+                        } else {
+                            manager.message(sender, text("You have moved.", RED));
+                        }
+                    }
+                }, 5 * 20);
             } else {
-                sender.teleportAsync(manager.config().spawnLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
-                manager.message(sender, "You have been brought to the spawn location!");
+                manager.fail("You are already teleporting.");
             }
         }
     }
