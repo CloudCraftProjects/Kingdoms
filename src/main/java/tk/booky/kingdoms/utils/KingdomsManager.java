@@ -134,6 +134,10 @@ public class KingdomsManager {
         return isInRadius(location, entity, config.endLocation(), config.endRadiusSquared());
     }
 
+    public boolean isInNether(Location location, @Nullable HumanEntity entity) {
+        return isInRadius(location, entity, config.netherLocation(), config.netherRadiusSquared());
+    }
+
     public boolean isInRadius(Location target, @Nullable HumanEntity entity, Location source, int radiusSquared) {
         if (source == null || radiusSquared <= 0) {
             return false;

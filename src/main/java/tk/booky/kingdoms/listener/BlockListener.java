@@ -17,6 +17,8 @@ public record BlockListener(KingdomsManager manager) implements Listener {
             event.setCancelled(true);
         } else if (manager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
+        } else if (manager.isInNether(event.getBlock().getLocation(), event.getPlayer())) {
+            event.setCancelled(true);
         }
     }
 
@@ -25,6 +27,8 @@ public record BlockListener(KingdomsManager manager) implements Listener {
         if (manager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
         } else if (manager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
+            event.setCancelled(true);
+        } else if (manager.isInNether(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
         }
     }
@@ -35,6 +39,8 @@ public record BlockListener(KingdomsManager manager) implements Listener {
             event.setCancelled(true);
         } else if (manager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
+        } else if (manager.isInNether(event.getBlock().getLocation(), event.getPlayer())) {
+            event.setCancelled(true);
         }
     }
 
@@ -43,6 +49,8 @@ public record BlockListener(KingdomsManager manager) implements Listener {
         if (manager.isInSpawn(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
         } else if (manager.isInEnd(event.getBlock().getLocation(), event.getPlayer())) {
+            event.setCancelled(true);
+        } else if (manager.isInNether(event.getBlock().getLocation(), event.getPlayer())) {
             event.setCancelled(true);
         }
     }

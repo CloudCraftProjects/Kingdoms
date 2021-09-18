@@ -13,10 +13,10 @@ import java.io.IOException;
 public class KingdomsConfig {
 
     private final File configurationFile;
-    private int endRadius = 0, spawnRadius = 0, pvpTimesStart = 0, pvpTimesEnd = 0;
-    private int endRadiusSquared = 0, spawnRadiusSquared = 0;
-    private Location endLocation, spawnLocation;
-    private boolean endActivated = true;
+    private int endRadius = 0, spawnRadius = 0, netherRadius = 0, pvpTimesStart = 0, pvpTimesEnd = 0;
+    private int endRadiusSquared = 0, spawnRadiusSquared = 0, netherRadiusSquared = 0;
+    private Location endLocation, spawnLocation, netherLocation;
+    private boolean endActivated = true, netherActivated = true;
 
     public KingdomsConfig(File configurationFile) {
         this.configurationFile = configurationFile;
@@ -39,12 +39,17 @@ public class KingdomsConfig {
             spawnLocation = configuration.getLocation("spawn.location", spawnLocation);
             spawnRadius = configuration.getInt("spawn.radius", spawnRadius);
 
+            netherActivated = configuration.getBoolean("nether.activated", netherActivated);
+            netherLocation = configuration.getLocation("nether.location", netherLocation);
+            netherRadius = configuration.getInt("nether.radius", netherRadius);
+
             for (KingdomsTeam team : KingdomsTeam.values()) {
                 // No need to do any more stuff here because it
                 // gets loaded into the instance automatically
                 configuration.get("teams." + team.name().toLowerCase());
             }
 
+            netherRadiusSquared = netherRadius * netherRadius;
             spawnRadiusSquared = spawnRadius * spawnRadius;
             endRadiusSquared = endRadius * endRadius;
             return this;
@@ -65,6 +70,10 @@ public class KingdomsConfig {
             configuration.set("spawn.location", spawnLocation);
             configuration.set("spawn.radius", spawnRadius);
 
+            configuration.set("nether.activated", netherActivated);
+            configuration.set("nether.location", netherLocation);
+            configuration.set("nether.radius", netherRadius);
+
             for (KingdomsTeam team : KingdomsTeam.values()) {
                 configuration.set("teams." + team.name().toLowerCase(), team);
             }
@@ -74,14 +83,6 @@ public class KingdomsConfig {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-    }
-
-    public int endRadiusSquared() {
-        return endRadiusSquared;
-    }
-
-    public int spawnRadiusSquared() {
-        return spawnRadiusSquared;
     }
 
     public File configurationFile() {
@@ -96,12 +97,28 @@ public class KingdomsConfig {
         return spawnRadius;
     }
 
+    public int netherRadius() {
+        return netherRadius;
+    }
+
     public int pvpTimesStart() {
         return pvpTimesStart;
     }
 
     public int pvpTimesEnd() {
         return pvpTimesEnd;
+    }
+
+    public int endRadiusSquared() {
+        return endRadiusSquared;
+    }
+
+    public int spawnRadiusSquared() {
+        return spawnRadiusSquared;
+    }
+
+    public int netherRadiusSquared() {
+        return netherRadiusSquared;
     }
 
     public Location endLocation() {
@@ -112,17 +129,30 @@ public class KingdomsConfig {
         return spawnLocation;
     }
 
+    public Location netherLocation() {
+        return netherLocation;
+    }
+
     public boolean endActivated() {
         return endActivated;
     }
 
+    public boolean netherActivated() {
+        return netherActivated;
+    }
+
     public void endRadius(int endRadius) {
-        endRadiusSquared = (this.endRadius = endRadius) * endRadius;
+        this.endRadius = endRadius;
         saveConfiguration();
     }
 
     public void spawnRadius(int spawnRadius) {
-        spawnRadiusSquared = (this.spawnRadius = spawnRadius) * spawnRadius;
+        this.spawnRadius = spawnRadius;
+        saveConfiguration();
+    }
+
+    public void netherRadius(int netherRadius) {
+        this.netherRadius = netherRadius;
         saveConfiguration();
     }
 
@@ -146,8 +176,18 @@ public class KingdomsConfig {
         saveConfiguration();
     }
 
+    public void netherLocation(Location netherLocation) {
+        this.netherLocation = netherLocation;
+        saveConfiguration();
+    }
+
     public void endActivated(boolean endActivated) {
         this.endActivated = endActivated;
+        saveConfiguration();
+    }
+
+    public void netherActivated(boolean netherActivated) {
+        this.netherActivated = netherActivated;
         saveConfiguration();
     }
 }

@@ -10,6 +10,8 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.event.world.PortalCreateEvent.CreateReason;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 public record MiscListener(KingdomsManager manager) implements Listener {
@@ -68,6 +70,13 @@ public record MiscListener(KingdomsManager manager) implements Listener {
                     event.setCancelled(true);
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onNetherPortal(PortalCreateEvent event) {
+        if (event.getReason() == CreateReason.FIRE && !manager.config().netherActivated()) {
+            event.setCancelled(true);
         }
     }
 }
