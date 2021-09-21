@@ -3,9 +3,11 @@ package tk.booky.kingdoms.listener;
 
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -128,6 +130,14 @@ public record TeamListener(KingdomsManager manager) implements Listener {
             manager.plugin().getSLF4JLogger().warn("Had to delete {} coins, a killer could not be found.", score.getScore());
             manager.message(event.getEntity(), text("Could not find killer, deleting " + score.getScore() + " coins...", RED));
             score.setScore(0);
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageByEntityEvent event) {
+        if (event.getDamager().getType() == EntityType.PLAYER && event.getEntityType() == EntityType.PLAYER && !event.isCancelled()) {
+            event.setCancelled(((Player) event.getDamager()).getGameMode() != GameMode.CREATIVE &&
+                KingdomsTeam.byMember(event.getDamager().getUniqueId()) == KingdomsTeam.byMember(event.getEntity().getUniqueId()));
         }
     }
 
