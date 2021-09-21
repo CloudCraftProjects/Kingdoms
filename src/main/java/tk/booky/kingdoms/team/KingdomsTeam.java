@@ -1,6 +1,7 @@
 package tk.booky.kingdoms.team;
 // Created by booky10 in Kingdoms (15:31 10.09.21)
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -18,6 +19,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import static net.kyori.adventure.identity.Identity.nil;
+import static net.kyori.adventure.text.Component.space;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
 @SerializableAs("kingdoms-team")
 public enum KingdomsTeam implements ConfigurationSerializable {
@@ -29,6 +34,7 @@ public enum KingdomsTeam implements ConfigurationSerializable {
 
     private static final Map<Block, KingdomsTeam> BY_TREASURE = new HashMap<>();
     private final Set<UUID> members = new HashSet<>();
+    private final Component suffixComponent;
     private final NamedTextColor color;
     private final char character;
     private Location treasureLocation;
@@ -38,6 +44,13 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     KingdomsTeam(NamedTextColor color, char character) {
         this.color = color;
         this.character = character;
+
+        suffixComponent = text()
+            .append(space())
+            .append(text('[', GRAY))
+            .append(text(character, color, BOLD))
+            .append(text(']', GRAY))
+            .build();
     }
 
     public static KingdomsTeam byTreasure(Block block) {
@@ -82,6 +95,10 @@ public enum KingdomsTeam implements ConfigurationSerializable {
         serialized.put("coins", coins);
         serialized.put("name", name());
         return serialized;
+    }
+
+    public Component suffixComponent() {
+        return suffixComponent;
     }
 
     public Set<UUID> members() {

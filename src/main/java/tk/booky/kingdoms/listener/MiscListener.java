@@ -1,6 +1,7 @@
 package tk.booky.kingdoms.listener;
 // Created by booky10 in CraftAttack (15:02 01.03.21)
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -13,8 +14,16 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.PortalCreateEvent.CreateReason;
 import tk.booky.kingdoms.utils.KingdomsManager;
+import tk.booky.kingdoms.utils.TeamRenderer;
 
-public record MiscListener(KingdomsManager manager) implements Listener {
+public class MiscListener implements Listener {
+
+    private final TeamRenderer chatRenderer = new TeamRenderer();
+    private final KingdomsManager manager;
+
+    public MiscListener(KingdomsManager manager) {
+        this.manager = manager;
+    }
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
@@ -78,5 +87,10 @@ public record MiscListener(KingdomsManager manager) implements Listener {
         if (event.getReason() == CreateReason.FIRE && !manager.config().netherActivated()) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onChat(AsyncChatEvent event) {
+        event.renderer(chatRenderer);
     }
 }
