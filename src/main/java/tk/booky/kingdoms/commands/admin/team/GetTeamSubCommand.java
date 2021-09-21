@@ -34,10 +34,11 @@ public class GetTeamSubCommand extends CommandAPICommand implements CommandExecu
         if (!target.isOnline() && !target.hasPlayedBefore()) {
             manager.fail(target.getName() + " has not played before.");
         } else {
-            for (KingdomsTeam team : KingdomsTeam.values()) {
-                if (team.members().contains(target.getUniqueId())) {
-                    manager.message(sender, target.getName() + " is in team " + team.name().toLowerCase() + ".");
-                }
+            KingdomsTeam team = KingdomsTeam.byMember(target.getUniqueId());
+            if (team != null) {
+                manager.message(sender, target.getName() + " is in team " + team.name().toLowerCase() + ".");
+            } else {
+                manager.fail(target.getName() + " is currently in no team.");
             }
         }
     }

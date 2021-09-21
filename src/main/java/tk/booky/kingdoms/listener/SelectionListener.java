@@ -75,27 +75,25 @@ public class SelectionListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        for (KingdomsTeam team : KingdomsTeam.values()) {
-            if (team.members().contains(event.getPlayer().getUniqueId())) {
-                if (team.coins() <= 0) {
-                    manager.message(event.getPlayer(), text("Your team has died, please select a new team.", RED).append(newline()));
+        KingdomsTeam team = KingdomsTeam.byMember(event.getPlayer().getUniqueId());
+        if (team != null) {
+            if (team.coins() <= 0) {
+                manager.message(event.getPlayer(), text("Your team has died, please select a new team.", RED).append(newline()));
 
-                    AttributeInstance maxHealth = event.getPlayer().getAttribute(GENERIC_MAX_HEALTH);
-                    event.getPlayer().setHealth(maxHealth == null ? 20 : maxHealth.getValue());
-                    for (PotionEffect effect : event.getPlayer().getActivePotionEffects()) {
-                        event.getPlayer().removePotionEffect(effect.getType());
-                    }
-
-                    event.getPlayer().getInventory().clear();
-                    event.getPlayer().setFoodLevel(20);
-
-                    event.getPlayer().setTotalExperience(0);
-                    event.getPlayer().setLevel(0);
-                    event.getPlayer().setExp(0);
-                    break;
+                AttributeInstance maxHealth = event.getPlayer().getAttribute(GENERIC_MAX_HEALTH);
+                event.getPlayer().setHealth(maxHealth == null ? 20 : maxHealth.getValue());
+                for (PotionEffect effect : event.getPlayer().getActivePotionEffects()) {
+                    event.getPlayer().removePotionEffect(effect.getType());
                 }
-                return;
+
+                event.getPlayer().getInventory().clear();
+                event.getPlayer().setFoodLevel(20);
+
+                event.getPlayer().setTotalExperience(0);
+                event.getPlayer().setLevel(0);
+                event.getPlayer().setExp(0);
             }
+            return;
         }
 
         for (Player player : selecting) {

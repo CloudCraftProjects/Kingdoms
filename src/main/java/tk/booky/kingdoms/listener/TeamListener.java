@@ -92,21 +92,19 @@ public record TeamListener(KingdomsManager manager) implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        for (KingdomsTeam team : KingdomsTeam.values()) {
-            if (event.getEntity().getUniqueId().equals(team.king())) {
-                broadcast(manager.prefix(text("The king " + event.getEntity().getName() + " of team " + team.name() + " has died! Members have received slowness and weakness for five minutes.", GREEN)));
-                List<PotionEffect> effects = Arrays.asList(
-                    new PotionEffect(PotionEffectType.SLOW, 300, 2, false, false),
-                    new PotionEffect(PotionEffectType.WEAKNESS, 300, 0, false, false)
-                );
+        KingdomsTeam team = KingdomsTeam.byMember(event.getEntity().getUniqueId());
+        if (team != null && event.getEntity().getUniqueId().equals(team.king())) {
+            broadcast(manager.prefix(text("The king " + event.getEntity().getName() + " of team " + team.name() + " has died! Members have received slowness and weakness for five minutes.", GREEN)));
+            List<PotionEffect> effects = Arrays.asList(
+                new PotionEffect(PotionEffectType.SLOW, 300, 2, false, false),
+                new PotionEffect(PotionEffectType.WEAKNESS, 300, 0, false, false)
+            );
 
-                for (UUID uuid : team.members()) {
-                    Player player = getPlayer(uuid);
-                    if (player != null && !player.getUniqueId().equals(team.king())) {
-                        player.addPotionEffects(effects);
-                    }
+            for (UUID uuid : team.members()) {
+                Player player = getPlayer(uuid);
+                if (player != null && !player.getUniqueId().equals(team.king())) {
+                    player.addPotionEffects(effects);
                 }
-                break;
             }
         }
 
@@ -115,16 +113,15 @@ public record TeamListener(KingdomsManager manager) implements Listener {
             Player killer = event.getEntity().getKiller();
 
             if (killer != null) {
-                for (KingdomsTeam team : KingdomsTeam.values()) {
-                    if (team.members().contains(killer.getUniqueId())) {
-                        manager.message(team, killer.getName() + " has obtained " + score.getScore() + " coins for your team. (Kill)");
-                        manager.message(killer, "You have obtained " + score.getScore() + " coins for your team.");
-                        event.getEntity().playSound(event.getEntity().getLocation(), ENTITY_PLAYER_LEVELUP, AMBIENT, 1f, 2f);
+                team = KingdomsTeam.byMember(killer.getUniqueId());
+                if (team != null) {
+                    manager.message(team, killer.getName() + " has obtained " + score.getScore() + " coins for your team. (Kill)");
+                    manager.message(killer, "You have obtained " + score.getScore() + " coins for your team.");
+                    event.getEntity().playSound(event.getEntity().getLocation(), ENTITY_PLAYER_LEVELUP, AMBIENT, 1f, 2f);
 
-                        team.coins(team.coins() + score.getScore());
-                        score.setScore(0);
-                        return;
-                    }
+                    team.coins(team.coins() + score.getScore());
+                    score.setScore(0);
+                    return;
                 }
             }
 

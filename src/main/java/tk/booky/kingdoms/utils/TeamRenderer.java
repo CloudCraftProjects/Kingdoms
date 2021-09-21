@@ -14,14 +14,7 @@ public class TeamRenderer implements ChatRenderer {
 
     @Override
     public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
-        KingdomsTeam team = null;
-        for (KingdomsTeam target : KingdomsTeam.values()) {
-            if (target.members().contains(source.getUniqueId())) {
-                team = target;
-                break;
-            }
-        }
-
+        KingdomsTeam team = KingdomsTeam.byMember(source.getUniqueId());
         return translatable("chat.type.text", team != null ? sourceDisplayName.append(team.suffixComponent()) : sourceDisplayName, message);
     }
 }

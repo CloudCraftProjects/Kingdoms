@@ -37,14 +37,15 @@ public class SetTeamSubCommand extends CommandAPICommand implements CommandExecu
         if (!target.isOnline() && !target.hasPlayedBefore()) {
             manager.fail(target.getName() + " has not played before.");
         } else {
-            for (KingdomsTeam team : KingdomsTeam.values()) {
-                team.members().remove(target.getUniqueId());
-                if (team.name().equals(targetTeam.toUpperCase())) {
-                    team.members().add(target.getUniqueId());
-                    manager.message(sender, target.getName() + " has been added to " + team.name().toLowerCase() + ".");
-                }
+            KingdomsTeam currentTeam = KingdomsTeam.byMember(target.getUniqueId());
+            if (currentTeam != null) {
+                currentTeam.members().remove(target.getUniqueId());
             }
 
+            KingdomsTeam newTeam = KingdomsTeam.valueOf(targetTeam.toUpperCase());
+            newTeam.members().add(target.getUniqueId());
+
+            manager.message(sender, target.getName() + " has been added to " + newTeam.name().toLowerCase() + ".");
             manager.config().saveConfiguration();
         }
     }

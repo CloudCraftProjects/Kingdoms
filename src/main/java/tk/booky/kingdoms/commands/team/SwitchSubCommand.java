@@ -36,15 +36,9 @@ public class SwitchSubCommand extends CommandAPICommand implements PlayerCommand
         if (newTeam.coins() <= 0) {
             manager.fail("This team has already died, please choose a different one.");
         } else {
-            KingdomsTeam oldTeam = null;
-            for (KingdomsTeam team : KingdomsTeam.values()) {
-                if (team.members().remove(sender.getUniqueId())) {
-                    oldTeam = team;
-                    break;
-                }
-            }
-
+            KingdomsTeam oldTeam = KingdomsTeam.byMember(sender.getUniqueId());
             if (oldTeam != null) {
+                oldTeam.members().remove(sender.getUniqueId());
                 broadcast(manager.prefix("Player " + sender.getName() + " has switched the team from " + oldTeam.name().toLowerCase() + " to " + newTeam.name().toLowerCase() + "."));
                 Location location = (newTeam.treasureLocation() == null ? manager.overworld().getSpawnLocation() : newTeam.treasureLocation()).toCenterLocation();
 

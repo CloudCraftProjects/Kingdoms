@@ -10,13 +10,17 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static net.kyori.adventure.identity.Identity.nil;
 import static net.kyori.adventure.text.Component.space;
@@ -33,7 +37,8 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     RED(NamedTextColor.RED, 'R');
 
     private static final Map<Block, KingdomsTeam> BY_TREASURE = new HashMap<>();
-    private final Set<UUID> members = new HashSet<>();
+    private static final Map<UUID, KingdomsTeam> BY_MEMBER = new HashMap<>();
+    private final Set<UUID> members = new TeamMembers();
     private final Component suffixComponent;
     private final NamedTextColor color;
     private final char character;
@@ -51,6 +56,10 @@ public enum KingdomsTeam implements ConfigurationSerializable {
             .append(text(character, color, BOLD))
             .append(text(']', GRAY))
             .build();
+    }
+
+    public static KingdomsTeam byMember(UUID member) {
+        return BY_MEMBER.get(member);
     }
 
     public static KingdomsTeam byTreasure(Block block) {
@@ -143,5 +152,105 @@ public enum KingdomsTeam implements ConfigurationSerializable {
 
     public void coins(int coins) {
         this.coins = coins;
+    }
+
+    private class TeamMembers extends HashSet<UUID> {
+
+        @Override
+        public boolean add(UUID uuid) {
+            BY_MEMBER.put(uuid, KingdomsTeam.this);
+            return super.add(uuid);
+        }
+
+        @Override
+        public boolean retainAll(@NotNull Collection<?> collection) {
+            Objects.requireNonNull(collection);
+            boolean modified = false;
+            Iterator<UUID> it = iterator();
+
+            while (it.hasNext()) {
+                Object object = it.next();
+                if (!collection.contains(object)) {
+                    it.remove();
+                    modified = true;
+                    BY_MEMBER.remove(object);
+                }
+            }
+
+            return modified;
+        }
+
+        @Override
+        public boolean remove(Object object) {
+            BY_MEMBER.remove(object);
+            return super.remove(object);
+        }
+
+        @Override
+        public void clear() {
+            for (UUID uuid : this) {
+                BY_MEMBER.remove(uuid);
+            }
+
+            super.clear();
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> collection) {
+            Objects.requireNonNull(collection);
+            boolean modified = false;
+
+            if (size() > collection.size()) {
+                for (Object object : collection) {
+                    if (modified |= remove(object)) {
+                        // noinspection SuspiciousMethodCalls
+                        BY_MEMBER.remove(object);
+                    }
+                }
+            } else {
+                for (Iterator<?> iterator = iterator(); iterator.hasNext(); ) {
+                    Object object = iterator.next();
+                    if (collection.contains(object)) {
+                        // noinspection SuspiciousMethodCalls
+                        BY_MEMBER.remove(iterator.next());
+                        iterator.remove();
+                        modified = true;
+                    }
+                }
+            }
+
+            return modified;
+        }
+
+        @Override
+        public boolean addAll(@NotNull Collection<? extends UUID> collection) {
+            boolean modified = false;
+            for (UUID uuid : collection) {
+                if (add(uuid)) {
+                    BY_MEMBER.put(uuid, KingdomsTeam.this);
+                    modified = true;
+                }
+            }
+
+            return modified;
+        }
+
+        @Override
+        public boolean removeIf(Predicate<? super UUID> filter) {
+            Objects.requireNonNull(filter);
+            boolean removed = false;
+            Iterator<UUID> each = iterator();
+
+            while (each.hasNext()) {
+                UUID uuid = each.next();
+                if (filter.test(uuid)) {
+                    each.remove();
+                    removed = true;
+                    BY_MEMBER.remove(uuid);
+                }
+            }
+
+            return removed;
+        }
     }
 }
