@@ -9,9 +9,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Score;
@@ -93,8 +96,34 @@ public record TeamListener(KingdomsManager manager) implements Listener {
     }
 
     @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getWhoClicked().getGameMode() != GameMode.CREATIVE) {
+            ItemStack item = event.getCurrentItem();
+            if (item != null && item.hasItemMeta() && item.getItemMeta().hasCustomModelData()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        KingdomsTeam team = KingdomsTeam.byMember(event.getPlayer().getUniqueId());
+        if (team != null) {
+            if (team.treasureLocation() != null) {
+                event.setRespawnLocation(team.treasureLocation().toCenterLocation());
+            }
+
+            if (event.getPlayer().getEquipment() != null) {
+                event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
+            }
+        }
+    }
+
+    @EventHandler
     public void onDeath(PlayerDeathEvent event) {
+        event.getDrops().removeIf(item -> item.getItemMeta().hasCustomModelData());
         KingdomsTeam team = KingdomsTeam.byMember(event.getEntity().getUniqueId());
+
         if (team != null && event.getEntity().getUniqueId().equals(team.king())) {
             broadcast(manager.prefix(text("The king " + event.getEntity().getName() + " of team " + team.name() + " has died! Members have received slowness and weakness for five minutes.", GREEN)));
             List<PotionEffect> effects = Arrays.asList(

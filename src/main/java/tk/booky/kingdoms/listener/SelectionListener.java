@@ -92,7 +92,10 @@ public class SelectionListener implements Listener {
                 event.getPlayer().setTotalExperience(0);
                 event.getPlayer().setLevel(0);
                 event.getPlayer().setExp(0);
+            } else if (event.getPlayer().getEquipment() != null) {
+                event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
             }
+
             return;
         }
 
@@ -142,6 +145,10 @@ public class SelectionListener implements Listener {
                                 event.getPlayer().kick(manager.prefix(text("An internal error occurred while selecting team.", RED)));
                             }
                         });
+
+                    if (event.getPlayer().getEquipment() != null) {
+                        event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
+                    }
 
                     selecting.remove(event.getPlayer());
                     for (Player player : selecting) {

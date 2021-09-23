@@ -9,6 +9,7 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import tk.booky.kingdoms.team.KingdomsTeam;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
@@ -44,6 +45,11 @@ public class SetTeamSubCommand extends CommandAPICommand implements CommandExecu
 
             KingdomsTeam newTeam = KingdomsTeam.valueOf(targetTeam.toUpperCase());
             newTeam.members().add(target.getUniqueId());
+
+            Player onlineTarget = target.getPlayer();
+            if (onlineTarget != null && onlineTarget.getEquipment() != null) {
+                onlineTarget.getEquipment().setHelmet(newTeam.coloredHelmet(), true);
+            }
 
             manager.message(sender, target.getName() + " has been added to " + newTeam.name().toLowerCase() + ".");
             manager.config().saveConfiguration();

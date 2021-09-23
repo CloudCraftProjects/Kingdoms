@@ -3,10 +3,14 @@ package tk.booky.kingdoms.team;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,6 +31,12 @@ import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
+import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
+import static org.apache.commons.lang.StringUtils.capitalize;
+import static org.bukkit.inventory.ItemFlag.HIDE_ATTRIBUTES;
+import static org.bukkit.inventory.ItemFlag.HIDE_DYE;
+import static org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS;
+import static org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE;
 
 @SerializableAs("kingdoms-team")
 public enum KingdomsTeam implements ConfigurationSerializable {
@@ -40,6 +50,7 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     private static final Map<UUID, KingdomsTeam> BY_MEMBER = new HashMap<>();
     private final Set<UUID> members = new TeamMembers();
     private final Component suffixComponent;
+    private final ItemStack coloredHelmet;
     private final NamedTextColor color;
     private final char character;
     private Location treasureLocation;
@@ -49,6 +60,15 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     KingdomsTeam(NamedTextColor color, char character) {
         this.color = color;
         this.character = character;
+
+        coloredHelmet = new ItemStack(Material.LEATHER_HELMET);
+        LeatherArmorMeta meta = (LeatherArmorMeta) coloredHelmet.getItemMeta();
+        meta.displayName(text(capitalize(name().toLowerCase()), color).decoration(ITALIC, false));
+        meta.addItemFlags(HIDE_DYE, HIDE_ENCHANTS, HIDE_UNBREAKABLE, HIDE_ATTRIBUTES);
+        meta.setColor(Color.fromRGB(color.value()));
+        meta.setCustomModelData(1);
+        meta.setUnbreakable(true);
+        coloredHelmet.setItemMeta(meta);
 
         suffixComponent = text()
             .append(space())
@@ -106,24 +126,29 @@ public enum KingdomsTeam implements ConfigurationSerializable {
         return serialized;
     }
 
+
+    public Location treasureLocation() {
+        return treasureLocation;
+    }
+
     public Component suffixComponent() {
         return suffixComponent;
     }
 
-    public Set<UUID> members() {
-        return members;
+    public ItemStack coloredHelmet() {
+        return coloredHelmet.clone();
     }
 
     public NamedTextColor color() {
         return color;
     }
 
-    public char character() {
-        return character;
+    public Set<UUID> members() {
+        return members;
     }
 
-    public Location treasureLocation() {
-        return treasureLocation;
+    public char character() {
+        return character;
     }
 
     public void treasureLocation(Location treasureLocation) {
