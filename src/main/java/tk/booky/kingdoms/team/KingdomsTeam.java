@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ import static net.kyori.adventure.identity.Identity.nil;
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 import static org.apache.commons.lang.StringUtils.capitalize;
@@ -53,6 +55,7 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     private final ItemStack coloredHelmet;
     private final NamedTextColor color;
     private final char character;
+    private ArmorStand coinDisplayStand;
     private Location treasureLocation;
     private UUID king = nil().uuid();
     private int coins = 10_000;
@@ -90,21 +93,13 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     public static KingdomsTeam deserialize(Map<String, Object> serialized) {
         KingdomsTeam team = valueOf((String) serialized.get("name"));
 
-        if (team.treasureLocation != null) {
-            BY_TREASURE.remove(team.treasureLocation.getBlock());
-        }
+        team.coins((int) serialized.getOrDefault("coins", team.coins()));
+        team.king(UUID.fromString((String) serialized.getOrDefault("king", team.king().toString())));
+        team.treasureLocation((Location) serialized.getOrDefault("treasure-location", team.treasureLocation()));
 
-        team.treasureLocation = (Location) serialized.getOrDefault("treasure-location", team.treasureLocation);
-        team.king = UUID.fromString((String) serialized.getOrDefault("king", team.king.toString()));
-        team.coins = (int) serialized.getOrDefault("coins", team.coins);
-
-        team.members.clear();
+        team.members().clear();
         for (String member : (List<String>) serialized.getOrDefault("members", Collections.emptyList())) {
-            team.members.add(UUID.fromString(member));
-        }
-
-        if (team.treasureLocation != null) {
-            BY_TREASURE.put(team.treasureLocation.getBlock(), team);
+            team.members().add(UUID.fromString(member));
         }
 
         return team;
@@ -113,19 +108,22 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     @Override
     public @NotNull Map<String, Object> serialize() {
         List<String> members = new ArrayList<>();
-        for (UUID member : this.members) {
+        for (UUID member : members()) {
             members.add(member.toString());
         }
 
         Map<String, Object> serialized = new HashMap<>();
-        serialized.put("treasure-location", treasureLocation);
-        serialized.put("king", king.toString());
+        serialized.put("treasure-location", treasureLocation());
+        serialized.put("king", king().toString());
         serialized.put("members", members);
-        serialized.put("coins", coins);
+        serialized.put("coins", coins());
         serialized.put("name", name());
         return serialized;
     }
 
+    public ArmorStand coinDisplayStand() {
+        return coinDisplayStand;
+    }
 
     public Location treasureLocation() {
         return treasureLocation;
@@ -151,6 +149,10 @@ public enum KingdomsTeam implements ConfigurationSerializable {
         return character;
     }
 
+    public void coinDisplayStand(ArmorStand coinDisplayStand) {
+        this.coinDisplayStand = coinDisplayStand;
+    }
+
     public void treasureLocation(Location treasureLocation) {
         if (this.treasureLocation != null) {
             BY_TREASURE.remove(this.treasureLocation.getBlock());
@@ -158,6 +160,22 @@ public enum KingdomsTeam implements ConfigurationSerializable {
 
         if (treasureLocation != null) {
             BY_TREASURE.put(treasureLocation.getBlock(), this);
+        }
+
+        if (coinDisplayStand != null) {
+            if (treasureLocation != null) {
+                coinDisplayStand.teleportAsync(treasureLocation.toCenterLocation().add(0, 2, 0));
+            } else {
+                coinDisplayStand.remove();
+            }
+        } else if (treasureLocation != null) {
+            coinDisplayStand = treasureLocation.getWorld().spawn(treasureLocation.toCenterLocation().add(0, 2, 0), ArmorStand.class);
+            coinDisplayStand.customName(text(coins + " Coins", WHITE).append(suffixComponent));
+            coinDisplayStand.setCustomNameVisible(true);
+            coinDisplayStand.setInvulnerable(true);
+            coinDisplayStand.setPersistent(true);
+            coinDisplayStand.setInvisible(true);
+            coinDisplayStand.setMarker(true);
         }
 
         this.treasureLocation = treasureLocation;
@@ -177,6 +195,10 @@ public enum KingdomsTeam implements ConfigurationSerializable {
 
     public void coins(int coins) {
         this.coins = coins;
+
+        if (coinDisplayStand != null) {
+            coinDisplayStand.customName(text(coins + " Coins", WHITE).append(suffixComponent));
+        }
     }
 
     private class TeamMembers extends HashSet<UUID> {

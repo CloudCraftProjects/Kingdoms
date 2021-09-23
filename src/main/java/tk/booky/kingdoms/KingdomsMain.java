@@ -11,6 +11,7 @@ import tk.booky.kingdoms.listener.MiscListener;
 import tk.booky.kingdoms.listener.SelectionListener;
 import tk.booky.kingdoms.listener.SitListener;
 import tk.booky.kingdoms.listener.TeamListener;
+import tk.booky.kingdoms.team.KingdomsTeam;
 import tk.booky.kingdoms.utils.KingdomsConfig;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
@@ -63,6 +64,11 @@ public final class KingdomsMain extends JavaPlugin {
 
         configuration.saveConfiguration();
         CommandAPI.unregister(command.getName(), true);
+
+        for (KingdomsTeam team : KingdomsTeam.values()) {
+            team.coinDisplayStand().remove();
+            team.coinDisplayStand(null);
+        }
     }
 
     public KingdomsConfig configuration() {
