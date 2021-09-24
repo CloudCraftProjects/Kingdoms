@@ -78,26 +78,26 @@ public class SelectionListener implements Listener {
         KingdomsTeam team = KingdomsTeam.byMember(event.getPlayer().getUniqueId());
         if (team != null) {
             if (team.coins() <= 0) {
-                manager.message(event.getPlayer(), text("Your team has died, please select a new team.", RED).append(newline()));
-
-                AttributeInstance maxHealth = event.getPlayer().getAttribute(GENERIC_MAX_HEALTH);
-                event.getPlayer().setHealth(maxHealth == null ? 20 : maxHealth.getValue());
-                for (PotionEffect effect : event.getPlayer().getActivePotionEffects()) {
-                    event.getPlayer().removePotionEffect(effect.getType());
-                }
-
-                event.getPlayer().getInventory().clear();
-                event.getPlayer().setFoodLevel(20);
-
-                event.getPlayer().setTotalExperience(0);
-                event.getPlayer().setLevel(0);
-                event.getPlayer().setExp(0);
+                manager.message(event.getPlayer(), text("WARNING: Your team has no more coins. YOU WILL NOT RESPAWN.", RED));
             } else {
                 event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
             }
 
             return;
         }
+
+        AttributeInstance maxHealth = event.getPlayer().getAttribute(GENERIC_MAX_HEALTH);
+        event.getPlayer().setHealth(maxHealth == null ? 20 : maxHealth.getValue());
+        for (PotionEffect effect : event.getPlayer().getActivePotionEffects()) {
+            event.getPlayer().removePotionEffect(effect.getType());
+        }
+
+        event.getPlayer().getInventory().clear();
+        event.getPlayer().setFoodLevel(20);
+
+        event.getPlayer().setTotalExperience(0);
+        event.getPlayer().setLevel(0);
+        event.getPlayer().setExp(0);
 
         for (Player player : selecting) {
             player.hidePlayer(manager.plugin(), event.getPlayer());

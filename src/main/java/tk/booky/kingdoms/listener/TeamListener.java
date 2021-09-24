@@ -33,6 +33,7 @@ import static org.bukkit.Bukkit.getPlayer;
 import static org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING;
 import static org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT;
 import static org.bukkit.Sound.ENTITY_PLAYER_LEVELUP;
+import static org.bukkit.Sound.ITEM_TOTEM_USE;
 import static org.bukkit.SoundCategory.AMBIENT;
 
 public record TeamListener(KingdomsManager manager) implements Listener {
@@ -75,13 +76,8 @@ public record TeamListener(KingdomsManager manager) implements Listener {
                         team.coins(team.coins() - takenCoins);
 
                         if (team.coins() <= 0) {
-                            broadcast(text("Team " + team.name().toLowerCase() + " has no more coins. It is dead.", RED));
-                            for (UUID member : team.members()) {
-                                Player player = getPlayer(member);
-                                if (player != null) {
-                                    player.kick(text("Your team has no more coins and is dead. Re-join to select another team.", RED));
-                                }
-                            }
+                            broadcast(text("Team " + team.name().toLowerCase() + " has no more coins. THE MEMBER WILL NOT RESPAWN.", RED));
+                            event.getPlayer().getWorld().playSound(team.treasureLocation(), ITEM_TOTEM_USE, Short.MAX_VALUE, 0.25f);
                         }
                     } else {
                         manager.message(event.getPlayer(), text("You have already coins on you.", RED));
@@ -109,9 +105,15 @@ public record TeamListener(KingdomsManager manager) implements Listener {
     public void onRespawn(PlayerRespawnEvent event) {
         KingdomsTeam team = KingdomsTeam.byMember(event.getPlayer().getUniqueId());
         if (team != null) {
-            event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
-            if (team.treasureLocation() != null) {
-                event.setRespawnLocation(team.treasureLocation().toCenterLocation());
+            if (team.coins() <= 0) {
+                broadcast(manager.prefix(text("Player " + event.getPlayer().getName() + " has died and has to select a new team!", RED)));
+                event.getPlayer().kick(text("Rejoin to select a new team.", RED));
+                team.members().remove(event.getPlayer().getUniqueId());
+            } else {
+                event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
+                if (team.treasureLocation() != null) {
+                    event.setRespawnLocation(team.treasureLocation().toCenterLocation());
+                }
             }
         }
     }
@@ -121,17 +123,19 @@ public record TeamListener(KingdomsManager manager) implements Listener {
         event.getDrops().removeIf(item -> item.getItemMeta().hasCustomModelData());
         KingdomsTeam team = KingdomsTeam.byMember(event.getEntity().getUniqueId());
 
-        if (team != null && event.getEntity().getUniqueId().equals(team.king())) {
-            broadcast(manager.prefix(text("The king " + event.getEntity().getName() + " of team " + team.name() + " has died! Members have received slowness and weakness for five minutes.", GREEN)));
-            List<PotionEffect> effects = Arrays.asList(
-                new PotionEffect(PotionEffectType.SLOW, 300, 2, false, false),
-                new PotionEffect(PotionEffectType.WEAKNESS, 300, 0, false, false)
-            );
+        if (team != null) {
+            if (event.getEntity().getUniqueId().equals(team.king())) {
+                broadcast(manager.prefix(text("The king " + event.getEntity().getName() + " of team " + team.name() + " has died! Members have received slowness and weakness for five minutes.", GREEN)));
+                List<PotionEffect> effects = Arrays.asList(
+                    new PotionEffect(PotionEffectType.SLOW, 300, 2, false, false),
+                    new PotionEffect(PotionEffectType.WEAKNESS, 300, 0, false, false)
+                );
 
-            for (UUID uuid : team.members()) {
-                Player player = getPlayer(uuid);
-                if (player != null && !player.getUniqueId().equals(team.king())) {
-                    player.addPotionEffects(effects);
+                for (UUID uuid : team.members()) {
+                    Player player = getPlayer(uuid);
+                    if (player != null && !player.getUniqueId().equals(team.king())) {
+                        player.addPotionEffects(effects);
+                    }
                 }
             }
         }
