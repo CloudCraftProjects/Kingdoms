@@ -33,6 +33,7 @@ repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://repo.codemc.org/repository/maven-public/")
     maven("https://libraries.minecraft.net/")
+    maven("https://repo1.maven.org/maven2/")
     maven("https://jitpack.io/")
 }
 
@@ -40,6 +41,7 @@ dependencies {
     api("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
     api("dev.jorel.commandapi:commandapi-core:6.3.0")
     api("com.mojang:brigadier:1.0.18")
+    api("net.luckperms:api:5.3")
 }
 
 java {
