@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.PortalCreateEvent.CreateReason;
 import tk.booky.kingdoms.utils.KingdomsManager;
@@ -61,6 +62,13 @@ public class MiscListener implements Listener {
             event.blockList().clear();
         } else if (manager.isInSpawn(event.getLocation(), null)) {
             event.blockList().clear();
+        }
+    }
+
+    @EventHandler
+    public void onHunger(FoodLevelChangeEvent event) {
+        if (manager.isInSpawn(event.getEntity().getLocation(), null)) {
+            event.setCancelled(true);
         }
     }
 
