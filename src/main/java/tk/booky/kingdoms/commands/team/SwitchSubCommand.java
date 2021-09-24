@@ -54,12 +54,9 @@ public class SwitchSubCommand extends CommandAPICommand implements PlayerCommand
                 sender.setLevel(0);
                 sender.setExp(0);
 
+                sender.getEquipment().setHelmet(newTeam.coloredHelmet(), true);
                 newTeam.members().add(sender.getUniqueId());
                 sender.teleportAsync(location);
-
-                if (sender.getEquipment() != null) {
-                    sender.getEquipment().setHelmet(newTeam.coloredHelmet(), true);
-                }
             } else {
                 manager.fail("An internal error occurred while trying to resolve the specified team.");
             }

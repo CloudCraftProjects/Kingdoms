@@ -92,7 +92,7 @@ public class SelectionListener implements Listener {
                 event.getPlayer().setTotalExperience(0);
                 event.getPlayer().setLevel(0);
                 event.getPlayer().setExp(0);
-            } else if (event.getPlayer().getEquipment() != null) {
+            } else {
                 event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
             }
 
@@ -146,9 +146,7 @@ public class SelectionListener implements Listener {
                             }
                         });
 
-                    if (event.getPlayer().getEquipment() != null) {
-                        event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
-                    }
+                    event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
 
                     selecting.remove(event.getPlayer());
                     for (Player player : selecting) {

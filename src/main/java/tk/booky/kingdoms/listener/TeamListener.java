@@ -109,12 +109,9 @@ public record TeamListener(KingdomsManager manager) implements Listener {
     public void onRespawn(PlayerRespawnEvent event) {
         KingdomsTeam team = KingdomsTeam.byMember(event.getPlayer().getUniqueId());
         if (team != null) {
+            event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
             if (team.treasureLocation() != null) {
                 event.setRespawnLocation(team.treasureLocation().toCenterLocation());
-            }
-
-            if (event.getPlayer().getEquipment() != null) {
-                event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
             }
         }
     }

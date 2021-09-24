@@ -47,7 +47,7 @@ public class SetTeamSubCommand extends CommandAPICommand implements CommandExecu
             newTeam.members().add(target.getUniqueId());
 
             Player onlineTarget = target.getPlayer();
-            if (onlineTarget != null && onlineTarget.getEquipment() != null) {
+            if (onlineTarget != null) {
                 onlineTarget.getEquipment().setHelmet(newTeam.coloredHelmet(), true);
             }
 

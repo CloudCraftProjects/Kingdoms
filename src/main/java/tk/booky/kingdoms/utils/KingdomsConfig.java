@@ -143,16 +143,19 @@ public class KingdomsConfig {
 
     public void endRadius(int endRadius) {
         this.endRadius = endRadius;
+        endRadiusSquared = endRadius * endRadius;
         saveConfiguration();
     }
 
     public void spawnRadius(int spawnRadius) {
         this.spawnRadius = spawnRadius;
+        spawnRadiusSquared = spawnRadius * spawnRadius;
         saveConfiguration();
     }
 
     public void netherRadius(int netherRadius) {
         this.netherRadius = netherRadius;
+        netherRadiusSquared = netherRadius * netherRadius;
         saveConfiguration();
     }
 
