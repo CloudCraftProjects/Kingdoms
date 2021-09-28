@@ -12,6 +12,7 @@ public class TeleportSubCommand extends CommandAPICommand {
 
         withSubcommand(new BedSubCommand(manager));
         withSubcommand(new EndSubCommand(manager));
+        withSubcommand(new TeamSubCommand(manager));
         withSubcommand(new SpawnSubCommand(manager));
         withSubcommand(new NetherSubCommand(manager));
     }
