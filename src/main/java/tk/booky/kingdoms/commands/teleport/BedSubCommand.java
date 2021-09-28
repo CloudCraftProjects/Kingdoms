@@ -4,6 +4,7 @@ package tk.booky.kingdoms.commands.teleport;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -53,7 +54,7 @@ public class BedSubCommand extends CommandAPICommand implements PlayerCommandExe
                         manager.message(sender, text("You have moved.", RED));
                     }
                 }
-            }, 5 * 20);
+            }, sender.getGameMode() == GameMode.SPECTATOR ? 0 : 5 * 20);
         } else {
             manager.fail("You are already teleporting.");
         }
