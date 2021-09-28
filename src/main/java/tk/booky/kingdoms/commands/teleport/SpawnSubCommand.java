@@ -6,10 +6,9 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -44,7 +43,7 @@ public class SpawnSubCommand extends CommandAPICommand implements PlayerCommandE
 
                     if (sender.isOnline()) {
                         if (oldLocation.equals(sender.getLocation().toBlockLocation())) {
-                            sender.teleportAsync(manager.config().spawnLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
+                            sender.teleportAsync(manager.config().spawnLocation().toCenterLocation(), TeleportCause.COMMAND);
                             manager.message(sender, "You have been brought to the spawn location!");
                         } else {
                             manager.message(sender, text("You have moved.", RED));

@@ -6,7 +6,7 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 import java.util.HashSet;
@@ -43,10 +43,10 @@ public class BedSubCommand extends CommandAPICommand implements PlayerCommandExe
                         Location location = sender.getBedSpawnLocation();
 
                         if (location == null) {
-                            sender.teleportAsync(manager.overworld().getSpawnLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
+                            sender.teleportAsync(manager.overworld().getSpawnLocation().toCenterLocation(), TeleportCause.COMMAND);
                             manager.message(sender, "Your bed was broken and you have been send to the world spawn!");
                         } else {
-                            sender.teleportAsync(location, PlayerTeleportEvent.TeleportCause.COMMAND);
+                            sender.teleportAsync(location.toCenterLocation(), TeleportCause.COMMAND);
                             manager.message(sender, "You have been brought back to your bed!");
                         }
                     } else {

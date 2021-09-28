@@ -6,7 +6,7 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 import java.util.HashSet;
@@ -43,7 +43,7 @@ public class EndSubCommand extends CommandAPICommand implements PlayerCommandExe
 
                     if (sender.isOnline()) {
                         if (oldLocation.equals(sender.getLocation().toBlockLocation())) {
-                            sender.teleportAsync(manager.config().endLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
+                            sender.teleportAsync(manager.config().endLocation(), TeleportCause.COMMAND);
                             manager.message(sender, "You have been brought to the end location!");
                         } else {
                             manager.message(sender, text("You have moved.", RED));
