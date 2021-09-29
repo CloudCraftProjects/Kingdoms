@@ -21,7 +21,10 @@ import org.bukkit.scoreboard.Score;
 import tk.booky.kingdoms.team.KingdomsTeam;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +32,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static org.bukkit.Bukkit.broadcast;
+import static org.bukkit.Bukkit.getOnlinePlayers;
 import static org.bukkit.Bukkit.getPlayer;
 import static org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING;
 import static org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT;
@@ -145,20 +149,23 @@ public record TeamListener(KingdomsManager manager) implements Listener {
             Player killer = event.getEntity().getKiller();
 
             if (killer != null) {
-                team = KingdomsTeam.byMember(killer.getUniqueId());
-                if (team != null) {
-                    manager.message(team, killer.getName() + " has obtained " + score.getScore() + " coins for your team. (Kill)");
-                    manager.message(killer, "You have obtained " + score.getScore() + " coins for your team.");
-                    event.getEntity().playSound(event.getEntity().getLocation(), ENTITY_PLAYER_LEVELUP, AMBIENT, 1f, 2f);
+                Score killerScore = manager.coinsObjective().getScore(killer.getName());
+                killerScore.setScore(killerScore.getScore() + score.getScore());
 
-                    team.coins(team.coins() + score.getScore());
-                    score.setScore(0);
-                    return;
-                }
+                manager.message(killer, "You have obtained " + score.getScore() + " coins.");
+                killer.playSound(event.getEntity().getLocation(), ENTITY_PLAYER_LEVELUP, AMBIENT, 1f, 2f);
+            } else {
+                List<Player> players = new ArrayList<>(getOnlinePlayers());
+                Collections.shuffle(players, new SecureRandom());
+                Player target = players.get(0);
+
+                Score targetScore = manager.coinsObjective().getScore(target.getName());
+                targetScore.setScore(targetScore.getScore() + score.getScore());
+
+                broadcast(manager.prefix(target.getName() + " has gotten " + score.getScore() + " coins through random selection."));
+                target.playSound(event.getEntity().getLocation(), ENTITY_PLAYER_LEVELUP, AMBIENT, 1f, 2f);
             }
 
-            manager.plugin().getSLF4JLogger().warn("Had to delete {} coins, a killer could not be found.", score.getScore());
-            manager.message(event.getEntity(), text("Could not find killer, deleting " + score.getScore() + " coins...", RED));
             score.setScore(0);
         }
     }
