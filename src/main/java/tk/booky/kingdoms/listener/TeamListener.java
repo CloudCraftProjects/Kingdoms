@@ -186,5 +186,17 @@ public record TeamListener(KingdomsManager manager) implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         event.getPlayer().hideBossBar(manager.coinBossbar().bossBar());
+
+        if (ALLOW_PVP_GAMERULE != null) {
+            Boolean pvp = event.getPlayer().getWorld().getGameRuleValue(ALLOW_PVP_GAMERULE);
+            if (pvp != null && pvp) {
+                Score score = manager.coinsObjective().getScore(event.getPlayer().getName());
+                if (score.isScoreSet() && score.getScore() > 0) {
+                    switch (event.getReason()) {
+                        case KICKED, DISCONNECTED -> event.getPlayer().damage(Integer.MAX_VALUE, null);
+                    }
+                }
+            }
+        }
     }
 }
