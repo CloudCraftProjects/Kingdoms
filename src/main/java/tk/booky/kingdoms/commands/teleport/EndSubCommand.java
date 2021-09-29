@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import org.bukkit.GameMode;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -20,6 +21,8 @@ import static org.bukkit.Bukkit.getScheduler;
 
 public class EndSubCommand extends CommandAPICommand implements PlayerCommandExecutor {
 
+    @SuppressWarnings("unchecked")
+    private static final GameRule<Boolean> ALLOW_PVP = (GameRule<Boolean>) GameRule.getByName("allowPvP");
     private final Set<UUID> currentlyTeleporting = new HashSet<>();
     private final KingdomsManager manager;
 
@@ -32,6 +35,13 @@ public class EndSubCommand extends CommandAPICommand implements PlayerCommandExe
 
     @Override
     public void run(Player sender, Object[] args) throws WrapperCommandSyntaxException {
+        if (ALLOW_PVP != null) {
+            Boolean pvp = sender.getWorld().getGameRuleValue(ALLOW_PVP);
+            if (pvp != null && pvp) {
+                manager.fail("Teleporting is deactivated while pvp is enabled.");
+            }
+        }
+
         if (manager.config().endLocation() == null) {
             manager.fail("The end location has not been set yet!");
         } else {
