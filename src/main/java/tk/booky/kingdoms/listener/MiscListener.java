@@ -17,14 +17,7 @@ import org.bukkit.event.world.PortalCreateEvent.CreateReason;
 import tk.booky.kingdoms.utils.KingdomsManager;
 import tk.booky.kingdoms.utils.TeamRenderer;
 
-public class MiscListener implements Listener {
-
-    private final TeamRenderer chatRenderer = new TeamRenderer();
-    private final KingdomsManager manager;
-
-    public MiscListener(KingdomsManager manager) {
-        this.manager = manager;
-    }
+public record MiscListener(KingdomsManager manager) implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
@@ -99,6 +92,6 @@ public class MiscListener implements Listener {
 
     @EventHandler
     public void onChat(AsyncChatEvent event) {
-        event.renderer(chatRenderer);
+        event.renderer(new TeamRenderer());
     }
 }

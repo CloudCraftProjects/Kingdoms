@@ -21,36 +21,40 @@ import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 public class TeamRenderer implements ChatRenderer {
 
+    private static final LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.legacySection();
+    private static final UserManager USERS = LuckPermsProvider.get().getUserManager();
     private static final Component SEPERATOR = text()
         .append(space())
-        .append(text('●', DARK_GRAY))
+        .append(text('\u25cf', DARK_GRAY))
         .append(space())
         .build();
-
-    private final UserManager users = LuckPermsProvider.get().getUserManager();
-    private final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
+    private Component message;
 
     @Override
     public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
-        TextComponent.Builder nameBuilder = text().color(GRAY);
+        if (this.message == null) {
+            TextComponent.Builder nameBuilder = text().color(GRAY);
 
-        User user = users.getUser(source.getUniqueId());
-        if (user != null) {
-            String prefixString = user.getCachedData().getMetaData().getPrefix();
-            if (prefixString != null) {
-                nameBuilder
-                    .append(serializer.deserialize(prefixString))
-                    .append(SEPERATOR);
+            User user = USERS.getUser(source.getUniqueId());
+            if (user != null) {
+                String prefixString = user.getCachedData().getMetaData().getPrefix();
+                if (prefixString != null) {
+                    nameBuilder
+                        .append(SERIALIZER.deserialize(prefixString))
+                        .append(SEPERATOR);
+                }
             }
-        }
 
-        nameBuilder.append(sourceDisplayName.color(GRAY));
-        KingdomsTeam team = KingdomsTeam.byMember(source.getUniqueId());
-        if (team != null) {
-            nameBuilder.append(team.suffixComponent());
-        }
+            nameBuilder.append(sourceDisplayName.color(GRAY));
+            KingdomsTeam team = KingdomsTeam.byMember(source.getUniqueId());
+            if (team != null) {
+                nameBuilder.append(team.suffixComponent());
+            }
 
-        return translatable("chat.type.text", nameBuilder.build(), message);
+            return this.message = translatable("chat.type.text", nameBuilder.build(), message);
+        } else {
+            return this.message;
+        }
     }
 }
 
