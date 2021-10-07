@@ -23,7 +23,7 @@ public class SetTeamSubCommand extends CommandAPICommand implements CommandExecu
 
         withArguments(
             new LiteralArgument("set"),
-            new MultiLiteralArgument("yellow", "green", "blue", "red"),
+            new MultiLiteralArgument("yellow", "green", "blue", "red", "none"),
             new OfflinePlayerArgument("target")
         );
 
@@ -43,15 +43,24 @@ public class SetTeamSubCommand extends CommandAPICommand implements CommandExecu
                 currentTeam.members().remove(target.getUniqueId());
             }
 
-            KingdomsTeam newTeam = KingdomsTeam.valueOf(targetTeam.toUpperCase());
-            newTeam.members().add(target.getUniqueId());
-
             Player onlineTarget = target.getPlayer();
-            if (onlineTarget != null) {
-                onlineTarget.getEquipment().setHelmet(newTeam.coloredHelmet(), true);
+            if (!"none".equalsIgnoreCase(targetTeam)) {
+                KingdomsTeam newTeam = KingdomsTeam.valueOf(targetTeam.toUpperCase());
+                newTeam.members().add(target.getUniqueId());
+
+                if (onlineTarget != null) {
+                    onlineTarget.getEquipment().setHelmet(newTeam.coloredHelmet(), true);
+                }
+
+                manager.message(sender, target.getName() + " has been added to " + newTeam.name().toLowerCase() + ".");
+            } else {
+                if (onlineTarget != null) {
+                    onlineTarget.getEquipment().setHelmet(null, true);
+                }
+
+                manager.message(sender, target.getName() + " has been removed from his team.");
             }
 
-            manager.message(sender, target.getName() + " has been added to " + newTeam.name().toLowerCase() + ".");
             manager.config().saveConfiguration();
         }
     }
