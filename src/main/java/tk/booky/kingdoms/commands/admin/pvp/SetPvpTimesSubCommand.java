@@ -23,22 +23,19 @@ public class SetPvpTimesSubCommand extends CommandAPICommand implements CommandE
 
         withArguments(
             new LiteralArgument("set"),
-            new IntegerArgument("start_hour", 0, 24),
-            new IntegerArgument("start_minute", 0, 60),
-            new IntegerArgument("end_hour", 0, 24),
-            new IntegerArgument("end_minute", 0, 60)
+            new IntegerArgument("start", 0, 24),
+            new IntegerArgument("end", 0, 24)
         );
 
-        withPermission("kingdoms.command.admin.pvp.times.get").executes(this);
+        withPermission("kingdoms.command.admin.pvp.times.set").executes(this);
     }
 
     @Override
     public void run(CommandSender sender, Object[] args) throws WrapperCommandSyntaxException {
-        int start = ((int) args[0]) + ((int) args[1]) * 60;
-        int end = ((int) args[2]) + ((int) args[3]) * 60;
+        int start = (int) args[0], end = (int) args[1];
 
         if (start > end) {
-            manager.fail("The ending time is later than the starting time.");
+            manager.fail("The starting hour is later than the ending hour.");
         } else {
             manager.config().pvpTimesStart(start);
             manager.config().pvpTimesEnd(end);
@@ -46,7 +43,7 @@ public class SetPvpTimesSubCommand extends CommandAPICommand implements CommandE
             if (end == start) {
                 broadcast(manager.prefix(text("Timed pvp has been disabled.", RED)));
             } else {
-                manager.message(sender, "The times for timed pvp have been applied.");
+                manager.message(sender, "The ending and starting hours have been applied.");
             }
         }
     }

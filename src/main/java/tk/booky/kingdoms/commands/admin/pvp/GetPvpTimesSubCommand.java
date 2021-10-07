@@ -33,9 +33,8 @@ public class GetPvpTimesSubCommand extends CommandAPICommand implements CommandE
         } else {
             DecimalFormat format = new DecimalFormat("00");
             manager.message(sender, String.format(
-                "Currently timed pvp will be activated from %s:%s to %s:%s.",
-                format.format(start % 60), format.format(start / 60),
-                format.format(end % 60), format.format(end / 60)
+                "Currently timed pvp will be activated from %s:00 to %s:00.",
+                format.format(start), format.format(end)
             ));
         }
     }

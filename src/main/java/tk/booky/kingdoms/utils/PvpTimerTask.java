@@ -8,8 +8,9 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.util.Calendar.HOUR_OF_DAY;
+import static java.util.Calendar.SECOND;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
@@ -39,37 +40,26 @@ public class PvpTimerTask extends TimerTask {
 
             if (start != end) {
                 Calendar calendar = Calendar.getInstance();
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-                int seconds = calendar.get(Calendar.SECOND);
+                int hour = calendar.get(HOUR_OF_DAY), second = calendar.get(SECOND);
 
-                AtomicBoolean newValue = new AtomicBoolean(false);
-                int startHour = start % 60, startMinute = start / 60;
-                int endHour = end % 60, endMinute = end / 60;
-
-                if (hour >= startHour && minute >= startMinute) {
-                    if (hour <= endHour && minute < endMinute) {
-                        newValue.set(true);
-                    }
-                }
-
+                boolean newValue = hour >= start && hour < end;
                 Boolean oldValue = manager.overworld().getGameRuleValue(GAME_RULE);
-                if (oldValue != null && oldValue != newValue.get()) {
+
+                if (oldValue != null && oldValue != newValue) {
                     broadcast(manager.prefix(text()
                         .color(GREEN)
                         .append(text("Timed pvp has been "))
-                        .append(text(newValue.get() ? "activated" : "deactivated").decorate(BOLD))
-                        .append(text(" until " + (newValue.get() ? "" : "tomorrow ") +
-                            FORMAT.format(newValue.get() ? endHour : startHour) + ":" +
-                            FORMAT.format(newValue.get() ? endMinute : startMinute) + ":" +
-                            FORMAT.format(seconds) + "."
+                        .append(text(newValue ? "activated" : "deactivated").decorate(BOLD))
+                        .append(text(" until " + (newValue ? "" : "tomorrow ") +
+                            FORMAT.format(newValue ? end : start) + ":00:" +
+                            FORMAT.format(second) + "."
                         ).decoration(BOLD, false))
                         .build()
                     ));
 
                     getScheduler().runTask(manager.plugin(), () -> {
                         for (World world : getWorlds()) {
-                            world.setGameRule(GAME_RULE, newValue.get());
+                            world.setGameRule(GAME_RULE, newValue);
                         }
                     });
                 }
