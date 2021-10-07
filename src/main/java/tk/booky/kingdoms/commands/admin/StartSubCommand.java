@@ -1,10 +1,11 @@
 package tk.booky.kingdoms.commands.admin;
 // Created by booky10 in Kingdoms (20:18 08.09.21)
 
+import com.github.yannicklamprecht.worldborder.api.IWorldBorder;
+import com.github.yannicklamprecht.worldborder.api.Position;
+import com.github.yannicklamprecht.worldborder.api.WorldBorderAction;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
-import dev.jorel.commandapi.arguments.LongArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import net.kyori.adventure.text.Component;
@@ -14,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import tk.booky.kingdoms.team.KingdomsTeam;
 import tk.booky.kingdoms.utils.KingdomsManager;
 
 import static net.kyori.adventure.text.Component.empty;
@@ -43,13 +45,9 @@ public class StartSubCommand extends CommandAPICommand implements CommandExecuto
         this.manager = manager;
 
         withArguments(
-            new IntegerArgument("countdown", 0), // 30
+            new IntegerArgument("countdown", 0),
             new TextArgument("project"),
-            new TextArgument("owner"),
-            new LongArgument("worldborder_start_time", 0), // 100
-            new DoubleArgument("worldborder_start", 1), // 2000
-            new LongArgument("worldborder_end_time", 0), // 2000
-            new DoubleArgument("worldborder_end", 1) // 59999968
+            new TextArgument("owner")
         );
 
         withPermission("kingdoms.command.admin.start").executes(this);
@@ -100,14 +98,31 @@ public class StartSubCommand extends CommandAPICommand implements CommandExecuto
                             player.playSound(player.getLocation(), UI_TOAST_CHALLENGE_COMPLETE, AMBIENT, 314159f, 1f);
                             player.showTitle(startTitle);
                             player.sendMessage(message);
+
+                            KingdomsTeam team = KingdomsTeam.byMember(player.getUniqueId());
+                            if (team != null) {
+                                IWorldBorder border = manager.worldBorderApi().getWorldBorder(player);
+
+                                border.center(Position.of(team.treasureLocation()));
+                                border.send(player, WorldBorderAction.SET_CENTER);
+
+                                border.size(9);
+                                border.send(player, WorldBorderAction.SET_SIZE);
+
+                                border.lerp(9, 509, 10 * 1000);
+                                border.send(player, WorldBorderAction.LERP_SIZE);
+                            }
                         }
 
-                        getScheduler().runTaskLater(manager.plugin(),
-                            () -> world.getWorldBorder().setSize((double) args[6]), ((long) args[5]) * 20);
-                        world.getWorldBorder().setSize((double) args[4], (long) args[3]);
+                        getScheduler().runTaskLater(manager.plugin(), () -> {
+                            for (Player player : getOnlinePlayers()) {
+                                manager.worldBorderApi().resetWorldBorderToGlobal(player);
+                            }
+                        }, 10 * 20);
 
                         world.setGameRule(DO_DAYLIGHT_CYCLE, true);
                         world.setGameRule(DO_MOB_SPAWNING, true);
+                        manager.config().started(true);
 
                         getScheduler().cancelTask(timeId);
                         getScheduler().cancelTask(getTaskId());

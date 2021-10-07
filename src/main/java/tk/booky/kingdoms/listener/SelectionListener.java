@@ -83,6 +83,14 @@ public class SelectionListener implements Listener {
                 event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
             }
 
+            if (!manager.config().started()) {
+                event.getPlayer().teleportAsync(team.treasureLocation().toCenterLocation(), TeleportCause.UNKNOWN).whenComplete((success, throwable) -> {
+                    if (success && throwable == null) {
+                        manager.worldBorderApi().setBorder(event.getPlayer(), 9, team.treasureLocation().toCenterLocation());
+                    }
+                });
+            }
+
             return;
         }
 
@@ -141,6 +149,10 @@ public class SelectionListener implements Listener {
                                 manager.message(event.getPlayer(), "You have selected team " + team.name().toLowerCase() + ".");
                                 broadcast(manager.prefix(text(event.getPlayer().getName() + " has selected team " + team.name().toLowerCase() + ".", GREEN)));
                                 event.getPlayer().playSound(event.getPlayer().getLocation(), ENTITY_PLAYER_LEVELUP, AMBIENT, 1f, 1f);
+
+                                if (!manager.config().started()) {
+                                    manager.worldBorderApi().setBorder(event.getPlayer(), 9, team.treasureLocation().toCenterLocation());
+                                }
                             } else {
                                 event.getPlayer().kick(manager.prefix(text("An internal error occurred while selecting team.", RED)));
                             }

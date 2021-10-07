@@ -1,6 +1,7 @@
 package tk.booky.kingdoms.listener;
 // Created by booky10 in Kingdoms (16:54 14.09.21)
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.entity.EntityType;
@@ -34,6 +35,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static org.bukkit.Bukkit.broadcast;
 import static org.bukkit.Bukkit.getOnlinePlayers;
 import static org.bukkit.Bukkit.getPlayer;
+import static org.bukkit.Bukkit.getScheduler;
 import static org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING;
 import static org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT;
 import static org.bukkit.Sound.ENTITY_PLAYER_LEVELUP;
@@ -117,6 +119,10 @@ public record TeamListener(KingdomsManager manager) implements Listener {
                 event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
                 if (team.treasureLocation() != null) {
                     event.setRespawnLocation(team.treasureLocation().toCenterLocation());
+                    if (!manager.config().started()) {
+                        getScheduler().runTask(manager.plugin(), () ->
+                            manager.worldBorderApi().setBorder(event.getPlayer(), 9, team.treasureLocation().toCenterLocation()));
+                    }
                 }
             }
         }

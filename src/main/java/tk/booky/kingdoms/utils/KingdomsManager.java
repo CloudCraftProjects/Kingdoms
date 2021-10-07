@@ -1,6 +1,7 @@
 package tk.booky.kingdoms.utils;
 // Created by booky10 in CraftAttack (14:51 01.03.21)
 
+import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
 import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
@@ -43,6 +44,7 @@ public class KingdomsManager {
 
     private final KingdomsConfig config;
     private final Plugin plugin;
+    private WorldBorderApi worldBorderApi;
     private CoinBossbarTask coinBossbar;
     private Objective coinsObjective;
     private Boolean cloudPlane;
@@ -170,6 +172,10 @@ public class KingdomsManager {
         this.coinsObjective = scoreboard.registerNewObjective("kingdoms_coins", "dummy", prefix(text("Coins", WHITE)));
         this.coinsObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
         return this;
+    }
+
+    public WorldBorderApi worldBorderApi() {
+        return worldBorderApi == null ? worldBorderApi = Bukkit.getServicesManager().load(WorldBorderApi.class) : worldBorderApi;
     }
 
     public CoinBossbarTask coinBossbar() {

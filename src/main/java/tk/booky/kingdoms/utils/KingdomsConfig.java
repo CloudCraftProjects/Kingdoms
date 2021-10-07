@@ -15,8 +15,8 @@ public class KingdomsConfig {
     private final File configurationFile;
     private int endRadius = 0, spawnRadius = 0, netherRadius = 0, pvpTimesStart = 0, pvpTimesEnd = 0;
     private int endRadiusSquared = 0, spawnRadiusSquared = 0, netherRadiusSquared = 0;
+    private boolean endActivated = true, netherActivated = true, started = false;
     private Location endLocation, spawnLocation, netherLocation;
-    private boolean endActivated = true, netherActivated = true;
 
     public KingdomsConfig(File configurationFile) {
         this.configurationFile = configurationFile;
@@ -28,6 +28,8 @@ public class KingdomsConfig {
             return saveConfiguration();
         } else {
             FileConfiguration configuration = YamlConfiguration.loadConfiguration(configurationFile);
+
+            started = configuration.getBoolean("started", started);
 
             pvpTimesStart = configuration.getInt("pvp-times.start", pvpTimesStart);
             pvpTimesEnd = configuration.getInt("pvp-times.end", pvpTimesEnd);
@@ -59,6 +61,8 @@ public class KingdomsConfig {
     public KingdomsConfig saveConfiguration() {
         try {
             FileConfiguration configuration = new YamlConfiguration();
+
+            configuration.set("started", started);
 
             configuration.set("pvp-times.start", pvpTimesStart);
             configuration.set("pvp-times.end", pvpTimesEnd);
@@ -121,6 +125,18 @@ public class KingdomsConfig {
         return netherRadiusSquared;
     }
 
+    public boolean endActivated() {
+        return endActivated;
+    }
+
+    public boolean netherActivated() {
+        return netherActivated;
+    }
+
+    public boolean started() {
+        return started;
+    }
+
     public Location endLocation() {
         return endLocation;
     }
@@ -131,14 +147,6 @@ public class KingdomsConfig {
 
     public Location netherLocation() {
         return netherLocation;
-    }
-
-    public boolean endActivated() {
-        return endActivated;
-    }
-
-    public boolean netherActivated() {
-        return netherActivated;
     }
 
     public void endRadius(int endRadius) {
@@ -169,6 +177,21 @@ public class KingdomsConfig {
         saveConfiguration();
     }
 
+    public void endActivated(boolean endActivated) {
+        this.endActivated = endActivated;
+        saveConfiguration();
+    }
+
+    public void netherActivated(boolean netherActivated) {
+        this.netherActivated = netherActivated;
+        saveConfiguration();
+    }
+
+    public void started(boolean started) {
+        this.started = started;
+        saveConfiguration();
+    }
+
     public void endLocation(Location endLocation) {
         this.endLocation = endLocation;
         saveConfiguration();
@@ -181,16 +204,6 @@ public class KingdomsConfig {
 
     public void netherLocation(Location netherLocation) {
         this.netherLocation = netherLocation;
-        saveConfiguration();
-    }
-
-    public void endActivated(boolean endActivated) {
-        this.endActivated = endActivated;
-        saveConfiguration();
-    }
-
-    public void netherActivated(boolean netherActivated) {
-        this.netherActivated = netherActivated;
         saveConfiguration();
     }
 }

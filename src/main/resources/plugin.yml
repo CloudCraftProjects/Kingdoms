@@ -5,5 +5,5 @@ api-version: 1.17
 prefix: KD
 authors: [ booky10 ]
 website: https://booky.tk/
-depend: [ CommandAPI, LuckPerms ]
+depend: [ CommandAPI, LuckPerms, WorldBorderAPI ]
 load: POSTWORLD
