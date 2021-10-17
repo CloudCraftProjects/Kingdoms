@@ -31,9 +31,9 @@ public class CoinBossbarTask extends BukkitRunnable {
 
             if (team.coins() <= 0) {
                 coinColor = RED;
-            } else if (team.coins() <= 3333) {
+            } else if (team.coins() <= 33333) {
                 coinColor = GOLD;
-            } else if (team.coins() <= 6666) {
+            } else if (team.coins() <= 66666) {
                 coinColor = YELLOW;
             } else {
                 coinColor = GREEN;

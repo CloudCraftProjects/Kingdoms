@@ -58,7 +58,7 @@ public enum KingdomsTeam implements ConfigurationSerializable {
     private ArmorStand coinDisplayStand;
     private Location treasureLocation;
     private UUID king = nil().uuid();
-    private int coins = 10_000;
+    private int coins = 100_000;
 
     KingdomsTeam(NamedTextColor color, char character) {
         this.color = color;
