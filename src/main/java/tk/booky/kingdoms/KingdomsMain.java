@@ -3,6 +3,7 @@ package tk.booky.kingdoms;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.booky.kingdoms.commands.KingdomsRootCommand;
 import tk.booky.kingdoms.listener.BlockListener;
@@ -53,6 +54,10 @@ public final class KingdomsMain extends JavaPlugin {
             manager.task().timer().scheduleAtFixedRate(manager.task(), 0, TimeUnit.MINUTES.toMillis(1));
         } else {
             getLogger().warning("The pvp times feature is not available, because cloudplane is not used.");
+        }
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            manager.worldBorderApi().resetWorldBorderToGlobal(player);
         }
     }
 
