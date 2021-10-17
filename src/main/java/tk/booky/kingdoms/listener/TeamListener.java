@@ -191,7 +191,7 @@ public record TeamListener(KingdomsManager manager) implements Listener {
         event.getPlayer().showBossBar(manager.coinBossbar().bossBar());
     }
 
-    @EventHandler
+    // @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         event.getPlayer().hideBossBar(manager.coinBossbar().bossBar());
 
