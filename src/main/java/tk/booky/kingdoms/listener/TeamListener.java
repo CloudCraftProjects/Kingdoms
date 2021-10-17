@@ -1,7 +1,6 @@
 package tk.booky.kingdoms.listener;
 // Created by booky10 in Kingdoms (16:54 14.09.21)
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.entity.EntityType;
@@ -118,7 +117,10 @@ public record TeamListener(KingdomsManager manager) implements Listener {
             } else {
                 event.getPlayer().getEquipment().setHelmet(team.coloredHelmet(), true);
                 if (team.treasureLocation() != null) {
-                    event.setRespawnLocation(team.treasureLocation().toCenterLocation());
+                    if (event.getPlayer().getBedSpawnLocation() == null) {
+                        event.setRespawnLocation(team.treasureLocation().toCenterLocation());
+                    }
+
                     if (!manager.config().started()) {
                         getScheduler().runTask(manager.plugin(), () ->
                             manager.worldBorderApi().setBorder(event.getPlayer(), 9, team.treasureLocation().toCenterLocation()));
