@@ -92,6 +92,8 @@ public class SelectionListener implements Listener {
             }
 
             return;
+        } else if (event.getPlayer().hasPermission("kingdoms.no-team")) {
+            return;
         }
 
         AttributeInstance maxHealth = event.getPlayer().getAttribute(GENERIC_MAX_HEALTH);
